@@ -31,18 +31,15 @@ export function useSocraticAI(
         const errorMessage = errorDetail?.message || 'Student requested conceptual reflection.';
         const targetLine = errorDetail?.line ?? null;
 
-        const response = await requestSocraticHint(
-          {
-            student_id: studentId,
-            problem_id: problem.numericId || parseInt(problem.id, 10) || 1,
-            source_code: sourceCode,
-            error_type: errorType,
-            error_message: errorMessage,
-            faulty_line_number: targetLine,
-            language: 'id',
-          },
-          remainingHints
-        );
+        const response = await requestSocraticHint({
+          student_id: studentId,
+          problem_id: problem.numericId || parseInt(problem.id, 10) || 1,
+          source_code: sourceCode,
+          error_type: errorType,
+          error_message: errorMessage,
+          faulty_line_number: targetLine,
+          language: 'id',
+        });
 
         const newHint: SocraticHint = {
           id: `hint-${Date.now()}`,

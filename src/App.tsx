@@ -28,6 +28,8 @@ export const App: React.FC = () => {
     session,
     problems,
     isJoined,
+    isLoading,
+    joinError,
     remainingHints,
     setRemainingHints,
     timeRemainingFormatted,
@@ -83,11 +85,15 @@ export const App: React.FC = () => {
   }, [problems, initializeCodes]);
 
   const handleJoin = async (name: string, idNum: string, room: string) => {
-    const joinedSession = await joinSession(name, idNum, room);
-    if (joinedSession) {
-      initializeCodes(joinedSession.problems);
-      await enterKiosk();
-      setActiveProblem(null);
+    try {
+      const joinedSession = await joinSession(name, idNum, room);
+      if (joinedSession) {
+        initializeCodes(joinedSession.problems);
+        await enterKiosk();
+        setActiveProblem(null);
+      }
+    } catch {
+      // Error is caught and surfaced to JoinRoomView via joinError
     }
   };
 
@@ -161,6 +167,8 @@ export const App: React.FC = () => {
         onJoin={handleJoin}
         theme={theme}
         onToggleTheme={toggleTheme}
+        apiError={joinError}
+        isLoading={isLoading}
       />
     );
   }

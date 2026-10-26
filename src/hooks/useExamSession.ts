@@ -8,6 +8,7 @@ export function useExamSession() {
   const [problems, setProblems] = useState<Problem[]>([]);
   const [isJoined, setIsJoined] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [joinError, setJoinError] = useState<string | null>(null);
   const [remainingHints, setRemainingHints] = useState<number>(5);
   const [timeRemainingSeconds, setTimeRemainingSeconds] = useState<number>(90 * 60);
 
@@ -39,6 +40,7 @@ export function useExamSession() {
 
   const joinSession = useCallback(async (name: string, idNum: string, room: string) => {
     setIsLoading(true);
+    setJoinError(null);
     try {
       const response = await joinExamRoom({
         room_code: room.trim().toUpperCase(),
@@ -81,6 +83,10 @@ export function useExamSession() {
 
       setIsJoined(true);
       return sessionData;
+    } catch (err: any) {
+      const errMsg = err?.message || 'Gagal masuk ke ruangan ujian.';
+      setJoinError(errMsg);
+      throw err;
     } finally {
       setIsLoading(false);
     }
@@ -90,6 +96,7 @@ export function useExamSession() {
     setSession(null);
     setProblems([]);
     setIsJoined(false);
+    setJoinError(null);
   }, []);
 
   return {
@@ -97,6 +104,8 @@ export function useExamSession() {
     problems,
     isJoined,
     isLoading,
+    joinError,
+    setJoinError,
     remainingHints,
     setRemainingHints,
     timeRemainingFormatted,

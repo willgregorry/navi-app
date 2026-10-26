@@ -6,6 +6,8 @@ interface JoinRoomViewProps {
   onJoin: (studentName: string, studentId: string, roomCode: string) => void;
   theme: Theme;
   onToggleTheme: () => void;
+  apiError?: string | null;
+  isLoading?: boolean;
 }
 
 interface FormErrors {
@@ -18,6 +20,8 @@ export const JoinRoomView: React.FC<JoinRoomViewProps> = ({
   onJoin,
   theme,
   onToggleTheme,
+  apiError,
+  isLoading = false,
 }) => {
   const [name, setName] = useState('');
   const [studentId, setStudentId] = useState('');
@@ -174,8 +178,29 @@ export const JoinRoomView: React.FC<JoinRoomViewProps> = ({
             </span>
           </div>
 
-          <button type="submit" className="join-submit-btn">
-            <span>Enter Assessment Room</span>
+          {apiError && (
+            <div
+              className="api-error-alert"
+              style={{
+                background: 'rgba(239, 68, 68, 0.1)',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                borderRadius: '8px',
+                padding: '10px 14px',
+                color: '#ef4444',
+                fontSize: '12.5px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                marginBottom: '16px',
+              }}
+            >
+              <AlertCircle size={15} style={{ flexShrink: 0 }} />
+              <span>{apiError}</span>
+            </div>
+          )}
+
+          <button type="submit" className="join-submit-btn" disabled={isLoading}>
+            <span>{isLoading ? 'Connecting to Assessment Room...' : 'Enter Assessment Room'}</span>
             <ArrowRight size={15} />
           </button>
         </form>
