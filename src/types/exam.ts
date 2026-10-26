@@ -8,6 +8,9 @@ export interface TestCase {
 export interface Problem {
   id: string;
   title: string;
+  difficulty: 'Easy' | 'Medium' | 'Hard';
+  points: number;
+  category: string;
   description: string;
   constraints: string[];
   starterCode: string;

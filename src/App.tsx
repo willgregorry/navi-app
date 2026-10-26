@@ -7,11 +7,12 @@ import { HintPanel } from './components/hints/HintPanel';
 import { ViolationBanner } from './components/alarm/ViolationBanner';
 import { SubmissionModal } from './components/modals/SubmissionModal';
 import { JoinRoomView } from './components/modals/JoinRoomView';
+import { ChallengeListView } from './components/challenges/ChallengeListView';
 import { useFocusGuard } from './hooks/useFocusGuard';
 import { useTheme } from './hooks/useTheme';
-import { SAMPLE_PROBLEM } from './services/mockExam';
+import { SAMPLE_PROBLEMS } from './services/mockExam';
 import { executePython } from './services/pythonRunner';
-import type { ExecutionResult } from './types/exam';
+import type { Problem, ExecutionResult } from './types/exam';
 import type { SocraticHint } from './types/hint';
 import './index.css';
 
@@ -21,11 +22,25 @@ export const App: React.FC = () => {
   const [studentName, setStudentName] = useState('');
   const [studentId, setStudentId] = useState('');
   const [roomCode, setRoomCode] = useState('');
-  const [code, setCode] = useState(SAMPLE_PROBLEM.starterCode);
-  const [hints, setHints] = useState<SocraticHint[]>([]);
+
+  // Active problem selection (null = Challenge List View)
+  const [activeProblem, setActiveProblem] = useState<Problem | null>(null);
+
+  // Student progress per problem
+  const [codes, setCodes] = useState<Record<string, string>>(() => {
+    const initial: Record<string, string> = {};
+    SAMPLE_PROBLEMS.forEach((p) => {
+      initial[p.id] = p.starterCode;
+    });
+    return initial;
+  });
+
+  const [solvedProblemIds, setSolvedProblemIds] = useState<string[]>([]);
+  const [inProgressProblemIds, setInProgressProblemIds] = useState<string[]>([]);
+  const [executionResults, setExecutionResults] = useState<Record<string, ExecutionResult | null>>({});
+  const [hintsByProblem, setHintsByProblem] = useState<Record<string, SocraticHint[]>>({});
   const [availableHints, setAvailableHints] = useState(5);
   const [isRunning, setIsRunning] = useState(false);
-  const [executionResult, setExecutionResult] = useState<ExecutionResult | null>(null);
   const [isKioskActive, setIsKioskActive] = useState(false);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
 
@@ -39,6 +54,8 @@ export const App: React.FC = () => {
     setStudentId(id);
     setRoomCode(room);
     setIsJoined(true);
+    // Student lands on Challenge List View first!
+    setActiveProblem(null);
 
     // Request Electron to enter Kiosk Mode
     if (window.naviElectron) {
@@ -55,37 +72,66 @@ export const App: React.FC = () => {
     }
   };
 
+  const handleCodeChange = (newCode: string | undefined) => {
+    if (!activeProblem) return;
+    const val = newCode || '';
+    setCodes((prev) => ({ ...prev, [activeProblem.id]: val }));
+
+    if (!inProgressProblemIds.includes(activeProblem.id)) {
+      setInProgressProblemIds((prev) => [...prev, activeProblem.id]);
+    }
+  };
+
   const handleRunCode = async () => {
+    if (!activeProblem) return;
+    const currentCode = codes[activeProblem.id] || activeProblem.starterCode;
+
     setIsRunning(true);
 
     try {
-      const result = await executePython(code, SAMPLE_PROBLEM.id);
-      setExecutionResult({
-        stdout: result.stdout,
-        stderr: result.stderr,
-        exitCode: result.exitCode,
-        isSuccess: result.isSuccess,
-      });
+      const result = await executePython(currentCode, activeProblem.id);
+      setExecutionResults((prev) => ({
+        ...prev,
+        [activeProblem.id]: {
+          stdout: result.stdout,
+          stderr: result.stderr,
+          exitCode: result.exitCode,
+          isSuccess: result.isSuccess,
+        },
+      }));
+
+      if (result.isSuccess) {
+        if (!solvedProblemIds.includes(activeProblem.id)) {
+          setSolvedProblemIds((prev) => [...prev, activeProblem.id]);
+        }
+      }
 
       if (result.hints && result.hints.length > 0) {
-        setHints(result.hints);
+        setHintsByProblem((prev) => ({ ...prev, [activeProblem.id]: result.hints }));
         setAvailableHints((prev) => Math.max(0, prev - 1));
       } else {
-        setHints([]);
+        setHintsByProblem((prev) => ({ ...prev, [activeProblem.id]: [] }));
       }
     } catch (err: any) {
-      setExecutionResult({
-        stdout: '',
-        stderr: err?.message || 'Execution failed unexpectedly.',
-        exitCode: 1,
-        isSuccess: false,
-      });
+      setExecutionResults((prev) => ({
+        ...prev,
+        [activeProblem.id]: {
+          stdout: '',
+          stderr: err?.message || 'Execution failed unexpectedly.',
+          exitCode: 1,
+          isSuccess: false,
+        },
+      }));
     } finally {
       setIsRunning(false);
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmitProblem = () => {
+    if (!activeProblem) return;
+    if (!solvedProblemIds.includes(activeProblem.id)) {
+      setSolvedProblemIds((prev) => [...prev, activeProblem.id]);
+    }
     setIsSubmitModalOpen(true);
   };
 
@@ -95,9 +141,11 @@ export const App: React.FC = () => {
       setIsKioskActive(false);
     }
     setIsSubmitModalOpen(false);
+    setActiveProblem(null);
     setIsJoined(false);
   };
 
+  // 1. Entrance Form
   if (!isJoined) {
     return (
       <JoinRoomView
@@ -107,6 +155,53 @@ export const App: React.FC = () => {
       />
     );
   }
+
+  // 2. Challenge List View (HackerRank contest overview)
+  if (!activeProblem) {
+    return (
+      <>
+        <ChallengeListView
+          roomCode={roomCode}
+          studentName={studentName}
+          studentId={studentId}
+          problems={SAMPLE_PROBLEMS}
+          solvedProblemIds={solvedProblemIds}
+          inProgressProblemIds={inProgressProblemIds}
+          onSelectProblem={(problem) => setActiveProblem(problem)}
+          onSubmitAll={() => setIsSubmitModalOpen(true)}
+          violationCount={violationCount}
+          isKioskActive={isKioskActive}
+          onToggleKiosk={handleToggleKiosk}
+          theme={theme}
+          onToggleTheme={toggleTheme}
+        />
+
+        <ViolationBanner
+          isOpen={isDistracted}
+          violationCount={violationCount}
+          onDismiss={dismissWarning}
+        />
+
+        <SubmissionModal
+          isOpen={isSubmitModalOpen}
+          onClose={() => setIsSubmitModalOpen(false)}
+          onExitExam={handleExitExam}
+          studentName={studentName}
+          studentId={studentId}
+          roomCode={roomCode}
+          violationCount={violationCount}
+          hintsUsed={5 - availableHints}
+          testCasesPassed={solvedProblemIds.length}
+          totalTestCases={SAMPLE_PROBLEMS.length}
+        />
+      </>
+    );
+  }
+
+  // 3. Problem Editor View
+  const currentCode = codes[activeProblem.id] || activeProblem.starterCode;
+  const currentResult = executionResults[activeProblem.id] || null;
+  const currentHints = hintsByProblem[activeProblem.id] || [];
 
   return (
     <div className="exam-app-container">
@@ -119,24 +214,26 @@ export const App: React.FC = () => {
         onToggleKiosk={handleToggleKiosk}
         theme={theme}
         onToggleTheme={toggleTheme}
+        onBackToChallenges={() => setActiveProblem(null)}
+        activeProblemTitle={activeProblem.title}
       />
 
       <ResizablePanels
-        leftPanel={<ProblemPanel problem={SAMPLE_PROBLEM} />}
+        leftPanel={<ProblemPanel problem={activeProblem} />}
         centerPanel={
           <EditorPanel
-            code={code}
-            onChange={(val) => setCode(val || '')}
+            code={currentCode}
+            onChange={handleCodeChange}
             onRunCode={handleRunCode}
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmitProblem}
             isRunning={isRunning}
-            executionResult={executionResult}
+            executionResult={currentResult}
             theme={theme}
           />
         }
         rightPanel={
           <HintPanel
-            hints={hints}
+            hints={currentHints}
             availableHints={availableHints}
             maxHints={5}
           />
@@ -159,13 +256,18 @@ export const App: React.FC = () => {
         isOpen={isSubmitModalOpen}
         onClose={() => setIsSubmitModalOpen(false)}
         onExitExam={handleExitExam}
+        onReturnToChallenges={() => {
+          setIsSubmitModalOpen(false);
+          setActiveProblem(null);
+        }}
+        problemTitle={activeProblem.title}
         studentName={studentName}
         studentId={studentId}
         roomCode={roomCode}
         violationCount={violationCount}
         hintsUsed={5 - availableHints}
-        testCasesPassed={SAMPLE_PROBLEM.sampleTestCases.length}
-        totalTestCases={SAMPLE_PROBLEM.sampleTestCases.length}
+        testCasesPassed={activeProblem.sampleTestCases.length}
+        totalTestCases={activeProblem.sampleTestCases.length}
       />
     </div>
   );

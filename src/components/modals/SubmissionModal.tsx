@@ -1,10 +1,12 @@
 import React from 'react';
-import { CheckCircle2, ArrowRight } from 'lucide-react';
+import { CheckCircle2, ArrowRight, ListOrdered } from 'lucide-react';
 
 interface SubmissionModalProps {
   isOpen: boolean;
   onClose: () => void;
   onExitExam: () => void;
+  onReturnToChallenges?: () => void;
+  problemTitle?: string;
   studentName: string;
   studentId: string;
   roomCode: string;
@@ -18,6 +20,8 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
   isOpen,
   onClose,
   onExitExam,
+  onReturnToChallenges,
+  problemTitle,
   studentName,
   studentId,
   roomCode,
@@ -32,7 +36,7 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
     <div className="submission-overlay" role="dialog" aria-modal="true">
       <div className="submission-card-unique">
         <div className="submission-top-tag">
-          <span className="submission-mono-badge">[ 01 // SUBMISSION FINALIZED ]</span>
+          <span className="submission-mono-badge">[ CHALLENGE SUBMISSION CONFIRMED ]</span>
           <span className="submission-room-stamp">{roomCode}</span>
         </div>
 
@@ -41,9 +45,11 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
             <CheckCircle2 size={36} />
           </div>
 
-          <h2 className="submission-title">Assessment Submitted</h2>
+          <h2 className="submission-title">
+            {problemTitle ? `Solved: ${problemTitle}` : 'Assessment Submitted'}
+          </h2>
           <p className="submission-subtitle">
-            Your Python solution has been packaged and securely dispatched to the proctor evaluation queue.
+            Your Python solution has been evaluated and securely registered with the assessment session.
           </p>
 
           <div className="submission-stats-grid">
@@ -78,12 +84,21 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
 
           <div className="submission-actions">
             <button onClick={onClose} className="sub-btn-secondary">
-              Review Solution
+              Review Code
             </button>
-            <button onClick={onExitExam} className="sub-btn-primary">
-              <span>Finish & Exit</span>
-              <ArrowRight size={14} />
-            </button>
+
+            {onReturnToChallenges ? (
+              <button onClick={onReturnToChallenges} className="sub-btn-primary">
+                <ListOrdered size={14} />
+                <span>Return to Challenges</span>
+                <ArrowRight size={14} />
+              </button>
+            ) : (
+              <button onClick={onExitExam} className="sub-btn-primary">
+                <span>Finish & Exit</span>
+                <ArrowRight size={14} />
+              </button>
+            )}
           </div>
         </div>
       </div>

@@ -49,20 +49,101 @@ function runPythonCode(code, problemId = 'prob-prime-01') {
       });
     }
 
-    // Wrap user code with test harness
-    const wrappedScript = `
-import sys
-
-# ---- User Code Execution Start ----
-try:
-${code.split('\n').map(l => '    ' + l).join('\n')}
-except Exception as _e:
-    import traceback
-    traceback.print_exc()
-    sys.exit(1)
-# ---- User Code Execution End ----
-
-# ---- Automated Test Case Verification ----
+    // Dynamic problem verification harness
+    let testHarnessPython = '';
+    if (problemId === 'prob-twosum-02') {
+      testHarnessPython = `
+if 'two_sum' in globals() and callable(globals()['two_sum']):
+    _test_cases = [
+        (([2, 7, 11, 15], 9), [0, 1]),
+        (([3, 2, 4], 6), [1, 2]),
+        (([3, 3], 6), [0, 1]),
+    ]
+    _passed = 0
+    print("\\n[Test Results]")
+    for _i, ((_nums, _target), _expected) in enumerate(_test_cases, 1):
+        try:
+            _actual = two_sum(_nums, _target)
+            if list(_actual) == list(_expected):
+                _passed += 1
+                print(f"  [PASS] Case {_i}: two_sum({_nums}, {_target}) == {_expected}")
+            else:
+                print(f"  [FAIL] Case {_i}: two_sum({_nums}, {_target}) -> Got {_actual}, expected {_expected}")
+        except Exception as _err:
+            print(f"  [FAIL] Case {_i}: Exception: {_err}")
+    if _passed == len(_test_cases):
+        print(f"\\nAll sample test cases passed! ({_passed}/{len(_test_cases)})")
+    else:
+        print(f"\\nSample test cases passed: {_passed}/{len(_test_cases)}")
+        sys.exit(2)
+else:
+    print("\\n[Test Diagnostics]\\nTarget function 'two_sum(nums, target)' is not defined in your code.")
+    print("Sample test cases passed: 0/3")
+    sys.exit(3)
+`;
+    } else if (problemId === 'prob-parentheses-03') {
+      testHarnessPython = `
+if 'is_valid_brackets' in globals() and callable(globals()['is_valid_brackets']):
+    _test_cases = [
+        ("()[]{}", True),
+        ("(]", False),
+        ("{[]}", True),
+    ]
+    _passed = 0
+    print("\\n[Test Results]")
+    for _i, (_inp, _expected) in enumerate(_test_cases, 1):
+        try:
+            _actual = is_valid_brackets(_inp)
+            if _actual == _expected:
+                _passed += 1
+                print(f"  [PASS] Case {_i}: is_valid_brackets('{_inp}') == {_expected}")
+            else:
+                print(f"  [FAIL] Case {_i}: is_valid_brackets('{_inp}') -> Got {_actual}, expected {_expected}")
+        except Exception as _err:
+            print(f"  [FAIL] Case {_i}: Exception: {_err}")
+    if _passed == len(_test_cases):
+        print(f"\\nAll sample test cases passed! ({_passed}/{len(_test_cases)})")
+    else:
+        print(f"\\nSample test cases passed: {_passed}/{len(_test_cases)}")
+        sys.exit(2)
+else:
+    print("\\n[Test Diagnostics]\\nTarget function 'is_valid_brackets(s)' is not defined in your code.")
+    print("Sample test cases passed: 0/3")
+    sys.exit(3)
+`;
+    } else if (problemId === 'prob-palindrome-04') {
+      testHarnessPython = `
+if 'longest_palindrome' in globals() and callable(globals()['longest_palindrome']):
+    _test_cases = [
+        ("babad", ["bab", "aba"]),
+        ("cbbd", ["bb"]),
+        ("a", ["a"]),
+    ]
+    _passed = 0
+    print("\\n[Test Results]")
+    for _i, (_inp, _expected) in enumerate(_test_cases, 1):
+        try:
+            _actual = longest_palindrome(_inp)
+            if _actual in _expected:
+                _passed += 1
+                print(f"  [PASS] Case {_i}: longest_palindrome('{_inp}') == '{_actual}'")
+            else:
+                print(f"  [FAIL] Case {_i}: longest_palindrome('{_inp}') -> Got '{_actual}', expected '{_expected[0]}'")
+        except Exception as _err:
+            print(f"  [FAIL] Case {_i}: Exception: {_err}")
+    if _passed == len(_test_cases):
+        print(f"\\nAll sample test cases passed! ({_passed}/{len(_test_cases)})")
+    else:
+        print(f"\\nSample test cases passed: {_passed}/{len(_test_cases)}")
+        sys.exit(2)
+else:
+    print("\\n[Test Diagnostics]\\nTarget function 'longest_palindrome(s)' is not defined in your code.")
+    print("Sample test cases passed: 0/3")
+    sys.exit(3)
+`;
+    } else {
+      // Default: prob-prime-01
+      testHarnessPython = `
 if 'is_prime' in globals() and callable(globals()['is_prime']):
     _test_cases = [
         (7, True),
@@ -80,17 +161,34 @@ if 'is_prime' in globals() and callable(globals()['is_prime']):
             else:
                 print(f"  [FAIL] Case {_i}: is_prime({_inp}) -> Got {_actual}, expected {_expected}")
         except Exception as _err:
-            print(f"  [FAIL] Case {_i}: is_prime({_inp}) -> Exception: {_err}")
-            
+            print(f"  [FAIL] Case {_i}: Exception: {_err}")
     if _passed == len(_test_cases):
         print(f"\\nAll sample test cases passed! ({_passed}/{len(_test_cases)})")
     else:
         print(f"\\nSample test cases passed: {_passed}/{len(_test_cases)}")
         sys.exit(2)
 else:
-    print("\\n[Test Diagnostics]\\nTarget function 'is_prime' is not defined in your code.")
+    print("\\n[Test Diagnostics]\\nTarget function 'is_prime(n)' is not defined in your code.")
     print("Sample test cases passed: 0/3")
     sys.exit(3)
+`;
+    }
+
+    // Wrap user code with test harness
+    const wrappedScript = `
+import sys
+
+# ---- User Code Execution Start ----
+try:
+${code.split('\n').map(l => '    ' + l).join('\n')}
+except Exception as _e:
+    import traceback
+    traceback.print_exc()
+    sys.exit(1)
+# ---- User Code Execution End ----
+
+# ---- Automated Test Case Verification ----
+${testHarnessPython}
 `;
 
     try {
@@ -171,7 +269,6 @@ else:
       // Clean line numbers in tracebacks to match user's editor line numbers
       let cleanStderr = stderrData;
       if (cleanStderr) {
-        // Adjust line number by subtracting the wrapper indentation header offset
         cleanStderr = cleanStderr.replace(/File ".*?", line (\d+)/g, (match, lineNum) => {
           const adj = Math.max(1, parseInt(lineNum, 10) - 5);
           return `File "solution.py", line ${adj}`;

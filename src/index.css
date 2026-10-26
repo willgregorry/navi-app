@@ -401,6 +401,41 @@ body {
   letter-spacing: 0.5px;
 }
 
+.header-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 9px;
+  background: var(--bg-surface-elevated);
+  border: none;
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--highlight-top);
+  transition: all 0.12s ease;
+  margin-left: 4px;
+}
+
+.header-back-btn:hover {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  transform: translateY(-1px);
+}
+
+.header-problem-breadcrumb {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .header-student-info {
   display: flex;
   align-items: center;
@@ -1549,4 +1584,396 @@ body {
   opacity: 0.92;
   transform: translateY(-1px);
 }
+
+/* ==========================================================================
+   HACKERRANK-STYLE CHALLENGE LIST VIEW & BADGES
+   ========================================================================== */
+
+.challenge-page-wrapper {
+  min-height: 100vh;
+  width: 100vw;
+  background: var(--bg-canvas);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.challenge-main-container {
+  max-width: 1080px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.challenge-hero-card {
+  background: var(--bg-surface);
+  border-radius: 12px;
+  padding: 28px 32px;
+  box-shadow: var(--card-elevation-high);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 32px;
+}
+
+.hero-left {
+  flex: 1;
+}
+
+.hero-room-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Fira Code', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--bg-surface-elevated);
+  padding: 4px 10px;
+  border-radius: 4px;
+  box-shadow: var(--highlight-top);
+  margin-bottom: 12px;
+}
+
+.hero-title {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.hero-subtitle {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  max-width: 580px;
+}
+
+.hero-stats-panel {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.hero-stats-panel .stat-box {
+  background: var(--bg-surface-elevated);
+  padding: 14px 18px;
+  border-radius: 8px;
+  box-shadow: var(--highlight-top);
+  min-width: 115px;
+}
+
+.hero-stats-panel .stat-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'Fira Code', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.hero-stats-panel .stat-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary);
+  font-family: 'Fira Code', monospace;
+}
+
+.hero-stats-panel .stat-max {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-dim);
+}
+
+.finish-assessment-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 14px 20px;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--highlight-top);
+  transition: all 0.12s ease;
+  white-space: nowrap;
+}
+
+.finish-assessment-btn:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.challenge-progress-bar-container {
+  background: var(--bg-surface);
+  border-radius: 10px;
+  padding: 16px 20px;
+  box-shadow: var(--highlight-top);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  font-family: 'Fira Code', monospace;
+}
+
+.progress-percent {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.progress-track {
+  height: 6px;
+  width: 100%;
+  background: var(--bg-surface-elevated);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--text-primary);
+  border-radius: 999px;
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.challenges-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.challenges-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.challenges-section-header h2 {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+}
+
+.challenges-count-badge {
+  font-family: 'Fira Code', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--bg-surface-elevated);
+  padding: 4px 10px;
+  border-radius: 4px;
+  box-shadow: var(--highlight-top);
+}
+
+.challenge-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.challenge-card {
+  background: var(--bg-surface);
+  border-radius: 10px;
+  padding: 20px 24px;
+  box-shadow: var(--highlight-top);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+  outline: none;
+}
+
+.challenge-card:hover {
+  background: var(--bg-surface-elevated);
+  transform: translateY(-2px);
+  box-shadow: var(--card-elevation-high);
+}
+
+.challenge-card.card-solved {
+  border-left: 3px solid var(--success-green);
+}
+
+.challenge-card.card-inprogress {
+  border-left: 3px solid var(--text-primary);
+}
+
+.challenge-card-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  flex: 1;
+}
+
+.status-indicator {
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.icon-solved {
+  color: var(--success-green);
+}
+
+.icon-inprogress {
+  color: var(--text-primary);
+}
+
+.icon-unattempted {
+  color: var(--text-dim);
+}
+
+.challenge-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.challenge-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.challenge-index {
+  font-family: 'Fira Code', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.challenge-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.challenge-excerpt {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  max-width: 650px;
+}
+
+.challenge-tags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.tag-category,
+.tag-difficulty,
+.tag-points {
+  font-family: 'Fira Code', monospace;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--bg-surface-elevated);
+  color: var(--text-muted);
+  box-shadow: var(--highlight-top);
+}
+
+.tag-difficulty.diff-easy {
+  color: var(--success-green);
+}
+
+.tag-difficulty.diff-medium {
+  color: var(--text-primary);
+}
+
+.tag-difficulty.diff-hard {
+  color: var(--alarm-red);
+}
+
+.tag-points {
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+
+.challenge-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: var(--btn-secondary-bg);
+  color: var(--btn-secondary-text);
+  border: none;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--highlight-top);
+  transition: all 0.12s ease;
+  white-space: nowrap;
+}
+
+.challenge-card:hover .challenge-action-btn {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+}
+
+.challenge-action-btn.btn-solved {
+  background: var(--bg-surface-elevated);
+  color: var(--success-green);
+}
+
+/* Panel Header Tags for ProblemPanel */
+.panel-header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-header-tags {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.badge-category,
+.badge-diff,
+.badge-pts {
+  font-family: 'Fira Code', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: var(--bg-surface-elevated);
+  color: var(--text-muted);
+  box-shadow: var(--highlight-top);
+}
+
+.badge-diff.diff-easy {
+  color: var(--success-green);
+}
+
+.badge-diff.diff-medium {
+  color: var(--text-primary);
+}
+
+.badge-diff.diff-hard {
+  color: var(--alarm-red);
+}
+
 

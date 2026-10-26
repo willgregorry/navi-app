@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, AlertTriangle, Clock, Sun, Moon } from 'lucide-react';
+import { Shield, AlertTriangle, Clock, Sun, Moon, ArrowLeft } from 'lucide-react';
 import type { Theme } from '../../hooks/useTheme';
 
 interface ExamHeaderProps {
@@ -12,6 +12,8 @@ interface ExamHeaderProps {
   onToggleKiosk?: () => void;
   theme: Theme;
   onToggleTheme: () => void;
+  onBackToChallenges?: () => void;
+  activeProblemTitle?: string;
 }
 
 export const ExamHeader: React.FC<ExamHeaderProps> = ({
@@ -24,6 +26,8 @@ export const ExamHeader: React.FC<ExamHeaderProps> = ({
   onToggleKiosk,
   theme,
   onToggleTheme,
+  onBackToChallenges,
+  activeProblemTitle,
 }) => {
   return (
     <header className="exam-header">
@@ -33,6 +37,23 @@ export const ExamHeader: React.FC<ExamHeaderProps> = ({
         </div>
         <span className="brand-title">Navi Kiosk</span>
         <span className="room-badge">{roomCode}</span>
+
+        {onBackToChallenges && (
+          <button
+            onClick={onBackToChallenges}
+            className="header-back-btn"
+            title="Return to Assessment Challenge List"
+          >
+            <ArrowLeft size={13} />
+            <span>Challenges</span>
+          </button>
+        )}
+
+        {activeProblemTitle && (
+          <span className="header-problem-breadcrumb" title={activeProblemTitle}>
+            / {activeProblemTitle}
+          </span>
+        )}
       </div>
 
       <div className="header-student-info">

@@ -10,8 +10,17 @@ export const ProblemPanel: React.FC<ProblemPanelProps> = ({ problem }) => {
   return (
     <aside className="panel problem-panel">
       <div className="panel-header">
-        <Terminal size={14} />
-        <h2>{problem.title}</h2>
+        <div className="panel-header-title">
+          <Terminal size={14} />
+          <h2>{problem.title}</h2>
+        </div>
+        <div className="panel-header-tags">
+          <span className="badge-category">{problem.category}</span>
+          <span className={`badge-diff diff-${problem.difficulty.toLowerCase()}`}>
+            {problem.difficulty}
+          </span>
+          <span className="badge-pts">{problem.points} pts</span>
+        </div>
       </div>
 
       <div className="panel-content scrollable">
