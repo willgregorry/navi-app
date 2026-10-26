@@ -14,6 +14,7 @@ function createMainWindow() {
     backgroundColor: WINDOW_DEFAULTS.BG_COLOR,
     frame: true,
     show: false,
+    icon: path.join(__dirname, '../public/navi-favicon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
       nodeIntegration: false,

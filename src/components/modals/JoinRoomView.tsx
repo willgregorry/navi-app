@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, ShieldCheck, ArrowRight } from 'lucide-react';
+import { ShieldCheck, ArrowRight } from 'lucide-react';
 
 interface JoinRoomViewProps {
   onJoin: (studentName: string, studentId: string, roomCode: string) => void;
@@ -26,7 +26,7 @@ export const JoinRoomView: React.FC<JoinRoomViewProps> = ({ onJoin }) => {
       <div className="join-card">
         <div className="join-header">
           <div className="join-logo">
-            <BookOpen size={28} />
+            <img src="/navi-favicon.png" alt="Navi" className="join-logo-img" />
           </div>
           <h1>Navi Kiosk</h1>
           <p className="subtitle">Platform Ujian Koding Python Berbasis Kiosk Terpadu</p>

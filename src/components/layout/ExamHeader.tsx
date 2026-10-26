@@ -1,5 +1,4 @@
-import React from 'react';
-import { Shield, AlertTriangle, Clock, BookOpen } from 'lucide-react';
+import { Shield, AlertTriangle, Clock } from 'lucide-react';
 
 interface ExamHeaderProps {
   roomCode: string;
@@ -24,7 +23,7 @@ export const ExamHeader: React.FC<ExamHeaderProps> = ({
     <header className="exam-header">
       <div className="header-brand">
         <div className="brand-logo">
-          <BookOpen className="icon" size={18} />
+          <img src="/navi-favicon.png" alt="Navi" className="header-logo-img" />
         </div>
         <div className="brand-meta">
           <span className="brand-title">Navi Kiosk</span>
