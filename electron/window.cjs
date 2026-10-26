@@ -52,7 +52,8 @@ function loadWindowContent(win) {
   const isDev = process.env.NODE_ENV === 'development' || !process.env.APP_IS_PACKAGED;
 
   if (isDev) {
-    win.loadURL('http://localhost:5173');
+    const devUrl = process.env.ELECTRON_DEV_URL || 'http://localhost:5173';
+    win.loadURL(devUrl);
   } else {
     win.loadFile(path.join(__dirname, '../dist/index.html'));
   }
