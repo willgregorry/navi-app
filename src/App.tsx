@@ -4,6 +4,7 @@ import { ProblemPanel } from './components/problem/ProblemPanel';
 import { EditorPanel } from './components/editor/EditorPanel';
 import { HintPanel } from './components/hints/HintPanel';
 import { ViolationBanner } from './components/alarm/ViolationBanner';
+import { SubmissionModal } from './components/modals/SubmissionModal';
 import { JoinRoomView } from './components/modals/JoinRoomView';
 import { useFocusGuard } from './hooks/useFocusGuard';
 import { useTheme } from './hooks/useTheme';
@@ -24,6 +25,7 @@ export const App: React.FC = () => {
   const [isRunning, setIsRunning] = useState(false);
   const [executionResult, setExecutionResult] = useState<ExecutionResult | null>(null);
   const [isKioskActive, setIsKioskActive] = useState(false);
+  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
 
   // Focus guard listens to window blur (Alt+Tab), triggers siren & violation count
   const { violationCount, isDistracted, dismissWarning } = useFocusGuard({
@@ -75,7 +77,16 @@ export const App: React.FC = () => {
   };
 
   const handleSubmit = () => {
-    alert('Solution successfully submitted! The assessment is complete.');
+    setIsSubmitModalOpen(true);
+  };
+
+  const handleExitExam = async () => {
+    if (window.naviElectron) {
+      await window.naviElectron.setKiosk(false);
+      setIsKioskActive(false);
+    }
+    setIsSubmitModalOpen(false);
+    setIsJoined(false);
   };
 
   if (!isJoined) {
@@ -123,6 +134,19 @@ export const App: React.FC = () => {
         isOpen={isDistracted}
         violationCount={violationCount}
         onDismiss={dismissWarning}
+      />
+
+      <SubmissionModal
+        isOpen={isSubmitModalOpen}
+        onClose={() => setIsSubmitModalOpen(false)}
+        onExitExam={handleExitExam}
+        studentName={studentName}
+        studentId={studentId}
+        roomCode={roomCode}
+        violationCount={violationCount}
+        hintsUsed={5 - availableHints}
+        testCasesPassed={SAMPLE_PROBLEM.sampleTestCases.length}
+        totalTestCases={SAMPLE_PROBLEM.sampleTestCases.length}
       />
     </div>
   );
