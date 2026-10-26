@@ -1,16 +1,17 @@
 const { contextBridge, ipcRenderer } = require('electron');
+const { IPC_CHANNELS } = require('./constants.cjs');
 
 contextBridge.exposeInMainWorld('naviElectron', {
-  setKiosk: (enable) => ipcRenderer.invoke('app:set-kiosk', enable),
-  refocus: () => ipcRenderer.invoke('app:refocus'),
+  setKiosk: (enable) => ipcRenderer.invoke(IPC_CHANNELS.SET_KIOSK, enable),
+  refocus: () => ipcRenderer.invoke(IPC_CHANNELS.REFOCUS),
   onBlur: (callback) => {
-    const subscription = () => callback();
-    ipcRenderer.on('app:blur', subscription);
-    return () => ipcRenderer.removeListener('app:blur', subscription);
+    const handler = () => callback();
+    ipcRenderer.on(IPC_CHANNELS.ON_BLUR, handler);
+    return () => ipcRenderer.removeListener(IPC_CHANNELS.ON_BLUR, handler);
   },
   onFocus: (callback) => {
-    const subscription = () => callback();
-    ipcRenderer.on('app:focus', subscription);
-    return () => ipcRenderer.removeListener('app:focus', subscription);
+    const handler = () => callback();
+    ipcRenderer.on(IPC_CHANNELS.ON_FOCUS, handler);
+    return () => ipcRenderer.removeListener(IPC_CHANNELS.ON_FOCUS, handler);
   },
 });
