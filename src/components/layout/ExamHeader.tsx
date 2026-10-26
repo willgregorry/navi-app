@@ -87,7 +87,7 @@ export const ExamHeader: React.FC<ExamHeaderProps> = ({
             className={`kiosk-toggle-btn ${isKioskActive ? 'active' : ''}`}
             title="Toggle Fullscreen Kiosk Mode"
           >
-            <Shield size={13} />
+            <Shield size={14} />
             <span>{isKioskActive ? 'Kiosk Active' : 'Kiosk Inactive'}</span>
           </button>
         )}

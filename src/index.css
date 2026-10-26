@@ -501,18 +501,18 @@ textarea {
 }
 
 .header-student-info {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 7px;
   line-height: 1;
 }
 
 .student-name {
+  font-family: var(--font-sans);
+  font-size: 13px;
   font-weight: 700;
   color: var(--text-primary);
-  display: inline-flex;
-  align-items: center;
   line-height: 1;
 }
 
@@ -520,8 +520,6 @@ textarea {
   font-family: var(--font-mono);
   font-size: 12px;
   color: var(--text-muted);
-  display: inline-flex;
-  align-items: center;
   line-height: 1;
 }
 
@@ -550,6 +548,7 @@ textarea {
 .violation-badge svg {
   display: block;
   flex-shrink: 0;
+  transform: translateY(-0.5px);
 }
 
 .timer-badge span,
@@ -609,16 +608,18 @@ textarea {
   height: 28px;
   padding: 0 10px;
   border-radius: 5px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   line-height: 1;
   box-shadow: var(--highlight-top);
+  transition: all 0.15s ease;
 }
 
 .kiosk-toggle-btn svg {
   display: block;
   flex-shrink: 0;
+  transform: translateY(-0.5px);
 }
 
 .kiosk-toggle-btn span {
