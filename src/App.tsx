@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ExamHeader } from './components/layout/ExamHeader';
 import { ResizablePanels } from './components/layout/ResizablePanels';
 import { ProblemPanel } from './components/problem/ProblemPanel';
@@ -8,193 +8,154 @@ import { ViolationBanner } from './components/alarm/ViolationBanner';
 import { SubmissionModal } from './components/modals/SubmissionModal';
 import { JoinRoomView } from './components/modals/JoinRoomView';
 import { ChallengeListView } from './components/challenges/ChallengeListView';
-import { useFocusGuard } from './hooks/useFocusGuard';
-import { useTheme } from './hooks/useTheme';
-import { executePython } from './services/pythonRunner';
-import { fetchChallenges, submitChallengeSolution, logViolationEvent } from './services/api/examApi';
-import type { Problem, ExecutionResult } from './types/exam';
-import type { SocraticHint } from './types/hint';
+import {
+  useExamSession,
+  useCodeRunner,
+  useSocraticAI,
+  useFocusGuard,
+  useKioskLock,
+  useViolationReporter,
+  useTheme,
+} from './hooks';
+import type { Problem } from './types/exam';
 import './index.css';
 
 export const App: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
-  const [isJoined, setIsJoined] = useState(false);
-  const [studentName, setStudentName] = useState('');
-  const [studentId, setStudentId] = useState('');
-  const [roomCode, setRoomCode] = useState('');
 
-  // Problem dataset fetched via Axios API layer
-  const [problems, setProblems] = useState<Problem[]>([]);
-  const [activeProblem, setActiveProblem] = useState<Problem | null>(null);
+  // 1. Exam Session Hook (Room join, countdown timer, problem list, quota)
+  const {
+    session,
+    problems,
+    isJoined,
+    remainingHints,
+    setRemainingHints,
+    timeRemainingFormatted,
+    joinSession,
+    exitSession,
+  } = useExamSession();
 
-  // Student progress per problem
-  const [codes, setCodes] = useState<Record<string, string>>({});
-  const [solvedProblemIds, setSolvedProblemIds] = useState<string[]>([]);
-  const [inProgressProblemIds, setInProgressProblemIds] = useState<string[]>([]);
-  const [executionResults, setExecutionResults] = useState<Record<string, ExecutionResult | null>>({});
-  const [hintsByProblem, setHintsByProblem] = useState<Record<string, SocraticHint[]>>({});
-  const [availableHints, setAvailableHints] = useState(5);
-  const [isRunning, setIsRunning] = useState(false);
-  const [isKioskActive, setIsKioskActive] = useState(false);
-  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
-  const [focusedLine, setFocusedLine] = useState<number | null>(null);
+  // 2. Code Runner Hook (Sandbox run, submit, test cases, score accumulation)
+  const {
+    codes,
+    updateCode,
+    initializeCodes,
+    executionResults,
+    solvedProblemIds,
+    inProgressProblemIds,
+    isRunning,
+    executeCode,
+    submitProblem,
+  } = useCodeRunner();
 
-  // Load challenges using Axios on mount or room change
-  useEffect(() => {
-    async function loadData() {
-      const data = await fetchChallenges(roomCode || undefined);
-      setProblems(data);
-      setCodes((prev) => {
-        const next = { ...prev };
-        data.forEach((p) => {
-          if (!next[p.id]) next[p.id] = p.starterCode;
-        });
-        return next;
-      });
-    }
-    loadData();
-  }, [roomCode]);
+  // 3. Socratic AI Hook (Gemini reflective inquiries, line targeting)
+  const { hintsByProblem, isRequesting: isRequestingHint, requestHintForProblem } = useSocraticAI(
+    remainingHints,
+    (newRemaining) => setRemainingHints(newRemaining)
+  );
 
-  // Focus guard listens to window blur (Alt+Tab), triggers siren & violation telemetry
+  // 4. Kiosk Lock Hook (Win32 low-level keyboard/taskmgr hook)
+  const { isKioskActive, toggleKiosk, enterKiosk, exitKiosk } = useKioskLock();
+
+  // 5. Anti-Cheat & Violation Reporter Hook
+  const { reportViolationEvent } = useViolationReporter({
+    studentId: session?.studentId ?? null,
+    isKioskActive,
+  });
+
   const { violationCount, isDistracted, dismissWarning } = useFocusGuard({
     enabled: isJoined,
     onViolation: (count) => {
-      logViolationEvent({
-        roomCode,
-        studentId,
-        count,
-        timestamp: Date.now(),
-      });
+      reportViolationEvent(count);
     },
   });
 
-  const handleJoin = async (name: string, id: string, room: string) => {
-    setStudentName(name);
-    setStudentId(id);
-    setRoomCode(room);
-    setIsJoined(true);
-    setActiveProblem(null);
+  // Local UI states
+  const [activeProblem, setActiveProblem] = useState<Problem | null>(null);
+  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
+  const [focusedLine, setFocusedLine] = useState<number | null>(null);
 
-    // Fetch latest challenges for this room via Axios
-    const roomProblems = await fetchChallenges(room);
-    setProblems(roomProblems);
+  // Sync starter codes when problems are loaded
+  useEffect(() => {
+    if (problems.length > 0) {
+      initializeCodes(problems);
+    }
+  }, [problems, initializeCodes]);
 
-    // Request Electron to enter Kiosk Mode
-    if (window.naviElectron) {
-      const res = await window.naviElectron.setKiosk(true);
-      setIsKioskActive(Boolean(res?.isKiosk));
+  const handleJoin = async (name: string, idNum: string, room: string) => {
+    const joinedSession = await joinSession(name, idNum, room);
+    if (joinedSession) {
+      initializeCodes(joinedSession.problems);
+      await enterKiosk();
+      setActiveProblem(null);
     }
   };
 
-  const handleToggleKiosk = async () => {
-    if (window.naviElectron) {
-      const nextState = !isKioskActive;
-      const res = await window.naviElectron.setKiosk(nextState);
-      setIsKioskActive(Boolean(res?.isKiosk));
-    }
-  };
-
-  const handleFocusLine = (line: number) => {
+  const handleFocusLine = useCallback((line: number) => {
     setFocusedLine(null);
     setTimeout(() => {
       setFocusedLine(line);
     }, 10);
-  };
-
-  const handleCodeChange = (newCode: string | undefined) => {
-    if (!activeProblem) return;
-    const val = newCode || '';
-    setCodes((prev) => ({ ...prev, [activeProblem.id]: val }));
-
-    if (!inProgressProblemIds.includes(activeProblem.id)) {
-      setInProgressProblemIds((prev) => [...prev, activeProblem.id]);
-    }
-  };
+  }, []);
 
   const handleRunCode = async () => {
-    if (!activeProblem) return;
-    const currentCode = codes[activeProblem.id] || activeProblem.starterCode;
+    if (!activeProblem || !session) return;
+    const result = await executeCode(activeProblem, session.studentId);
 
-    setIsRunning(true);
-
-    try {
-      const result = await executePython(currentCode, activeProblem.id);
-      setExecutionResults((prev) => ({
-        ...prev,
-        [activeProblem.id]: {
-          stdout: result.stdout,
-          stderr: result.stderr,
-          exitCode: result.exitCode,
-          isSuccess: result.isSuccess,
-        },
-      }));
-
-      if (result.isSuccess) {
-        if (!solvedProblemIds.includes(activeProblem.id)) {
-          setSolvedProblemIds((prev) => [...prev, activeProblem.id]);
-        }
-      }
-
-      if (result.hints && result.hints.length > 0) {
-        setHintsByProblem((prev) => ({ ...prev, [activeProblem.id]: result.hints }));
-        setAvailableHints((prev) => Math.max(0, prev - 1));
-        const firstLine = result.hints.find((h) => h.line)?.line;
-        if (firstLine) {
-          handleFocusLine(firstLine);
-        }
-      } else {
-        setHintsByProblem((prev) => ({ ...prev, [activeProblem.id]: [] }));
-      }
-    } catch (err: any) {
-      setExecutionResults((prev) => ({
-        ...prev,
-        [activeProblem.id]: {
-          stdout: '',
-          stderr: err?.message || 'Execution failed unexpectedly.',
-          exitCode: 1,
-          isSuccess: false,
-        },
-      }));
-    } finally {
-      setIsRunning(false);
+    // If there is an AST syntax error, automatically highlight line & query Socratic advice
+    if (result.hasSyntaxError && result.faultyLine) {
+      handleFocusLine(result.faultyLine);
+      const currentCode = codes[activeProblem.id] || activeProblem.starterCode;
+      await requestHintForProblem(activeProblem, session.studentId, currentCode, {
+        type: 'SyntaxError',
+        message: result.syntaxErrorMessage || result.stderr,
+        line: result.faultyLine,
+      });
     }
   };
 
-  const handleSubmitProblem = () => {
-    if (!activeProblem) return;
-    if (!solvedProblemIds.includes(activeProblem.id)) {
-      setSolvedProblemIds((prev) => [...prev, activeProblem.id]);
+  const handleManualRequestHint = async () => {
+    if (!activeProblem || !session || remainingHints <= 0) return;
+    const currentCode = codes[activeProblem.id] || activeProblem.starterCode;
+    const currentResult = executionResults[activeProblem.id];
+
+    let errorDetail = undefined;
+    if (currentResult?.stderr) {
+      const match = currentResult.stderr.match(/line (\d+)/);
+      errorDetail = {
+        type: currentResult.hasSyntaxError ? 'SyntaxError' : 'RuntimeError',
+        message: currentResult.stderr,
+        line: match ? parseInt(match[1], 10) : null,
+      };
     }
 
-    const currentCode = codes[activeProblem.id] || activeProblem.starterCode;
+    const hint = await requestHintForProblem(
+      activeProblem,
+      session.studentId,
+      currentCode,
+      errorDetail
+    );
 
-    // Dispatch submission to Axios API
-    submitChallengeSolution({
-      roomCode,
-      studentName,
-      studentId,
-      problemId: activeProblem.id,
-      code: currentCode,
-      isSuccess: true,
-      passedCount: activeProblem.sampleTestCases.length,
-      totalCount: activeProblem.sampleTestCases.length,
-    });
+    if (hint?.line) {
+      handleFocusLine(hint.line);
+    }
+  };
 
+  const handleSubmitProblem = async () => {
+    if (!activeProblem || !session) return;
+    await submitProblem(activeProblem, session.studentId);
     setIsSubmitModalOpen(true);
   };
 
   const handleExitExam = async () => {
-    if (window.naviElectron) {
-      await window.naviElectron.setKiosk(false);
-      setIsKioskActive(false);
-    }
+    await exitKiosk();
     setIsSubmitModalOpen(false);
     setActiveProblem(null);
-    setIsJoined(false);
+    exitSession();
   };
 
   // 1. Entrance Form
-  if (!isJoined) {
+  if (!isJoined || !session) {
     return (
       <JoinRoomView
         onJoin={handleJoin}
@@ -204,22 +165,23 @@ export const App: React.FC = () => {
     );
   }
 
-  // 2. Challenge List View (HackerRank contest overview)
+  // 2. Challenge List View (Multi-problem contest overview)
   if (!activeProblem) {
     return (
       <>
         <ChallengeListView
-          roomCode={roomCode}
-          studentName={studentName}
-          studentId={studentId}
+          roomCode={session.roomCode}
+          studentName={session.studentName}
+          studentId={session.studentIdNumber}
           problems={problems}
           solvedProblemIds={solvedProblemIds}
           inProgressProblemIds={inProgressProblemIds}
           onSelectProblem={(problem) => setActiveProblem(problem)}
           onSubmitAll={() => setIsSubmitModalOpen(true)}
           violationCount={violationCount}
+          timeRemaining={timeRemainingFormatted}
           isKioskActive={isKioskActive}
-          onToggleKiosk={handleToggleKiosk}
+          onToggleKiosk={toggleKiosk}
           theme={theme}
           onToggleTheme={toggleTheme}
         />
@@ -234,11 +196,11 @@ export const App: React.FC = () => {
           isOpen={isSubmitModalOpen}
           onClose={() => setIsSubmitModalOpen(false)}
           onExitExam={handleExitExam}
-          studentName={studentName}
-          studentId={studentId}
-          roomCode={roomCode}
+          studentName={session.studentName}
+          studentId={session.studentIdNumber}
+          roomCode={session.roomCode}
           violationCount={violationCount}
-          hintsUsed={5 - availableHints}
+          hintsUsed={session.hintQuota - remainingHints}
           testCasesPassed={solvedProblemIds.length}
           totalTestCases={problems.length}
         />
@@ -246,7 +208,7 @@ export const App: React.FC = () => {
     );
   }
 
-  // 3. Problem Editor View
+  // 3. Problem Code Editor View
   const currentCode = codes[activeProblem.id] || activeProblem.starterCode;
   const currentResult = executionResults[activeProblem.id] || null;
   const currentHints = hintsByProblem[activeProblem.id] || [];
@@ -266,12 +228,13 @@ export const App: React.FC = () => {
   return (
     <div className="exam-app-container">
       <ExamHeader
-        roomCode={roomCode}
-        studentName={studentName}
-        studentId={studentId}
+        roomCode={session.roomCode}
+        studentName={session.studentName}
+        studentId={session.studentIdNumber}
         violationCount={violationCount}
+        timeRemaining={timeRemainingFormatted}
         isKioskActive={isKioskActive}
-        onToggleKiosk={handleToggleKiosk}
+        onToggleKiosk={toggleKiosk}
         theme={theme}
         onToggleTheme={toggleTheme}
         onBackToChallenges={() => setActiveProblem(null)}
@@ -283,7 +246,7 @@ export const App: React.FC = () => {
         centerPanel={
           <EditorPanel
             code={currentCode}
-            onChange={handleCodeChange}
+            onChange={(val) => updateCode(activeProblem.id, val || '')}
             onRunCode={handleRunCode}
             onSubmit={handleSubmitProblem}
             isRunning={isRunning}
@@ -297,9 +260,11 @@ export const App: React.FC = () => {
         rightPanel={
           <HintPanel
             hints={currentHints}
-            availableHints={availableHints}
-            maxHints={5}
+            availableHints={remainingHints}
+            maxHints={session.hintQuota}
             onFocusLine={handleFocusLine}
+            onRequestHint={handleManualRequestHint}
+            isRequestingHint={isRequestingHint}
           />
         }
         initialLeftWidth={340}
@@ -325,11 +290,11 @@ export const App: React.FC = () => {
           setActiveProblem(null);
         }}
         problemTitle={activeProblem.title}
-        studentName={studentName}
-        studentId={studentId}
-        roomCode={roomCode}
+        studentName={session.studentName}
+        studentId={session.studentIdNumber}
+        roomCode={session.roomCode}
         violationCount={violationCount}
-        hintsUsed={5 - availableHints}
+        hintsUsed={session.hintQuota - remainingHints}
         testCasesPassed={activeProblem.sampleTestCases.length}
         totalTestCases={activeProblem.sampleTestCases.length}
       />

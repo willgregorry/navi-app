@@ -1,9 +1,13 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { ENV } from '../../config/env';
 
+// Normalize base URL to ensure it targets /api/v1
+const rawBaseUrl = ENV.API_URL.replace(/\/+$/, '');
+const normalizedBaseUrl = rawBaseUrl.endsWith('/v1') ? rawBaseUrl : `${rawBaseUrl}/v1`;
+
 export const apiClient = axios.create({
-  baseURL: ENV.API_URL,
-  timeout: 10000,
+  baseURL: normalizedBaseUrl,
+  timeout: 15000,
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
@@ -19,18 +23,15 @@ apiClient.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Response Interceptor: Standardized error parsing
+// Response Interceptor: Provide clean debugging & error propagation
 apiClient.interceptors.response.use(
   (response) => response,
-  (error) => {
-    // Graceful handling for offline / local hackathon mode
+  (error: AxiosError) => {
     if (error.code === 'ERR_NETWORK' || error.message?.includes('Network Error')) {
-      console.info('[Navi API] Backend server currently offline, utilizing local dummy fallback dataset.');
+      console.warn('[Navi API] Backend server currently unreachable, invoking offline fallback handler.');
     }
     return Promise.reject(error);
   }

@@ -8,6 +8,8 @@ interface HintPanelProps {
   availableHints: number;
   maxHints: number;
   onFocusLine?: (line: number) => void;
+  onRequestHint?: () => void;
+  isRequestingHint?: boolean;
 }
 
 export const HintPanel: React.FC<HintPanelProps> = ({
@@ -15,6 +17,8 @@ export const HintPanel: React.FC<HintPanelProps> = ({
   availableHints,
   maxHints,
   onFocusLine,
+  onRequestHint,
+  isRequestingHint = false,
 }) => {
   return (
     <aside className="panel hint-panel">
@@ -56,6 +60,34 @@ export const HintPanel: React.FC<HintPanelProps> = ({
             Hints isolate structural issues and pose targeted reflective inquiries, requiring you to reason through and repair the defect yourself.
           </p>
         </div>
+
+        {onRequestHint && (
+          <button
+            type="button"
+            onClick={onRequestHint}
+            disabled={availableHints <= 0 || isRequestingHint}
+            style={{
+              width: '100%',
+              marginBottom: '16px',
+              padding: '10px 14px',
+              borderRadius: '8px',
+              background: availableHints > 0 ? 'var(--bg-elevated)' : 'var(--bg-canvas)',
+              border: '1px solid var(--border-subtle)',
+              color: availableHints > 0 ? 'var(--text-main)' : 'var(--text-muted)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              fontSize: '13px',
+              fontWeight: 600,
+              cursor: availableHints > 0 ? 'pointer' : 'not-allowed',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            <Sparkles size={14} style={{ color: 'var(--brand-primary)' }} />
+            <span>{isRequestingHint ? 'Analyzing Code Structure...' : 'Request Socratic Guidance'}</span>
+          </button>
+        )}
 
         {hints.length === 0 ? (
           <div className="empty-hints-state">
