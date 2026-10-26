@@ -9,7 +9,8 @@ import { SubmissionModal } from './components/modals/SubmissionModal';
 import { JoinRoomView } from './components/modals/JoinRoomView';
 import { useFocusGuard } from './hooks/useFocusGuard';
 import { useTheme } from './hooks/useTheme';
-import { SAMPLE_PROBLEM, analyzeCodeLocally } from './services/mockExam';
+import { SAMPLE_PROBLEM } from './services/mockExam';
+import { executePython } from './services/pythonRunner';
 import type { ExecutionResult } from './types/exam';
 import type { SocraticHint } from './types/hint';
 import './index.css';
@@ -54,27 +55,34 @@ export const App: React.FC = () => {
     }
   };
 
-  const handleRunCode = () => {
+  const handleRunCode = async () => {
     setIsRunning(true);
 
-    setTimeout(() => {
-      const result = analyzeCodeLocally(code);
+    try {
+      const result = await executePython(code, SAMPLE_PROBLEM.id);
       setExecutionResult({
         stdout: result.stdout,
         stderr: result.stderr,
-        exitCode: result.isSuccess ? 0 : 1,
+        exitCode: result.exitCode,
         isSuccess: result.isSuccess,
       });
 
-      if (result.hints.length > 0) {
+      if (result.hints && result.hints.length > 0) {
         setHints(result.hints);
         setAvailableHints((prev) => Math.max(0, prev - 1));
       } else {
         setHints([]);
       }
-
+    } catch (err: any) {
+      setExecutionResult({
+        stdout: '',
+        stderr: err?.message || 'Execution failed unexpectedly.',
+        exitCode: 1,
+        isSuccess: false,
+      });
+    } finally {
       setIsRunning(false);
-    }, 600);
+    }
   };
 
   const handleSubmit = () => {

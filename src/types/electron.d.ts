@@ -3,6 +3,13 @@ export interface NaviElectronAPI {
   refocus: () => Promise<boolean>;
   onBlur: (callback: () => void) => () => void;
   onFocus: (callback: () => void) => () => void;
+  runPython: (payload: { code: string; problemId?: string }) => Promise<{
+    stdout: string;
+    stderr: string;
+    exitCode: number;
+    isSuccess: boolean;
+    hints: any[];
+  }>;
 }
 
 declare global {

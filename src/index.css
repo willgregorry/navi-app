@@ -862,6 +862,36 @@ body {
   font-size: 12px;
 }
 
+.terminal-output-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.terminal-stdout {
+  margin: 0;
+  font-family: 'Fira Code', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--text-primary);
+}
+
+.terminal-stdout.terminal-success {
+  color: var(--success-green);
+}
+
+.terminal-stderr {
+  margin: 0;
+  font-family: 'Fira Code', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--alarm-red);
+}
+
 .output-success {
   color: var(--success-green);
 }

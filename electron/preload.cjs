@@ -14,4 +14,5 @@ contextBridge.exposeInMainWorld('naviElectron', {
     ipcRenderer.on(IPC_CHANNELS.ON_FOCUS, handler);
     return () => ipcRenderer.removeListener(IPC_CHANNELS.ON_FOCUS, handler);
   },
+  runPython: (payload) => ipcRenderer.invoke(IPC_CHANNELS.RUN_PYTHON, payload),
 });

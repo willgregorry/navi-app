@@ -82,9 +82,19 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
           {isRunning ? (
             <div className="terminal-running">Executing code in sandbox...</div>
           ) : executionResult ? (
-            <pre className={executionResult.isSuccess ? 'output-success' : 'output-error'}>
-              {executionResult.stderr || executionResult.stdout || 'Program completed with no output.'}
-            </pre>
+            <div className="terminal-output-container">
+              {executionResult.stdout && (
+                <pre className={`terminal-stdout ${executionResult.isSuccess ? 'terminal-success' : ''}`}>
+                  {executionResult.stdout}
+                </pre>
+              )}
+              {executionResult.stderr && (
+                <pre className="terminal-stderr">{executionResult.stderr}</pre>
+              )}
+              {!executionResult.stdout && !executionResult.stderr && (
+                <div className="terminal-placeholder">Program completed with no output.</div>
+              )}
+            </div>
           ) : (
             <div className="terminal-placeholder">
               Click &quot;Run Code&quot; to execute and see stdout/stderr diagnostics.

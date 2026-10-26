@@ -24,6 +24,11 @@ function registerIpcHandlers() {
     }
     return false;
   });
+
+  ipcMain.handle(IPC_CHANNELS.RUN_PYTHON, async (event, { code, problemId }) => {
+    const { runPythonCode } = require('./pythonRunner.cjs');
+    return await runPythonCode(code, problemId);
+  });
 }
 
 module.exports = {

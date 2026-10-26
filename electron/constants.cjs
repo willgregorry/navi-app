@@ -5,6 +5,7 @@ const IPC_CHANNELS = {
   ON_BLUR: 'app:blur',
   ON_FOCUS: 'app:focus',
   TRIGGER_ALARM: 'app:trigger-alarm',
+  RUN_PYTHON: 'app:run-python',
 };
 
 const WINDOW_DEFAULTS = {
