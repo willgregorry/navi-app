@@ -145,6 +145,15 @@ export const App: React.FC = () => {
     setIsJoined(false);
   };
 
+  const [focusedLine, setFocusedLine] = useState<number | null>(null);
+
+  const handleFocusLine = (line: number) => {
+    setFocusedLine(null);
+    setTimeout(() => {
+      setFocusedLine(line);
+    }, 10);
+  };
+
   // 1. Entrance Form
   if (!isJoined) {
     return (
@@ -203,6 +212,18 @@ export const App: React.FC = () => {
   const currentResult = executionResults[activeProblem.id] || null;
   const currentHints = hintsByProblem[activeProblem.id] || [];
 
+  const hintLines = currentHints
+    .map((h) => h.line)
+    .filter((l): l is number => typeof l === 'number' && l > 0);
+
+  let errorLines: number[] = [];
+  if (currentResult?.stderr) {
+    const matches = [...currentResult.stderr.matchAll(/line (\d+)/g)];
+    errorLines = matches.map((m) => parseInt(m[1], 10)).filter((n) => !isNaN(n));
+  }
+
+  const highlightLines = Array.from(new Set([...hintLines, ...errorLines]));
+
   return (
     <div className="exam-app-container">
       <ExamHeader
@@ -229,6 +250,9 @@ export const App: React.FC = () => {
             isRunning={isRunning}
             executionResult={currentResult}
             theme={theme}
+            highlightLines={highlightLines}
+            focusedLine={focusedLine}
+            onJumpToLine={handleFocusLine}
           />
         }
         rightPanel={
@@ -236,6 +260,7 @@ export const App: React.FC = () => {
             hints={currentHints}
             availableHints={availableHints}
             maxHints={5}
+            onFocusLine={handleFocusLine}
           />
         }
         initialLeftWidth={340}

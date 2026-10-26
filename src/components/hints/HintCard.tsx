@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import type { SocraticHint } from '../../types/hint';
-import { ChevronDown, ChevronUp, Check, AlertCircle, HelpCircle, Lightbulb } from 'lucide-react';
+import { ChevronDown, ChevronUp, Check, AlertCircle, HelpCircle, Lightbulb, Crosshair } from 'lucide-react';
 
 interface HintCardProps {
   hint: SocraticHint;
   index: number;
+  onFocusLine?: (line: number) => void;
 }
 
-export const HintCard: React.FC<HintCardProps> = ({ hint, index }) => {
+export const HintCard: React.FC<HintCardProps> = ({ hint, index, onFocusLine }) => {
   const [isRevealed, setIsRevealed] = useState(false);
   const [isUnderstood, setIsUnderstood] = useState(false);
 
@@ -27,9 +28,15 @@ export const HintCard: React.FC<HintCardProps> = ({ hint, index }) => {
         </div>
 
         {hint.line !== undefined && (
-          <span className="card-line-badge" title={`Pertains to line ${hint.line}`}>
-            LINE {hint.line}
-          </span>
+          <button
+            type="button"
+            onClick={() => onFocusLine && onFocusLine(hint.line!)}
+            className="card-line-badge clickable"
+            title={`Click to highlight & jump to line ${hint.line} in code editor`}
+          >
+            <Crosshair size={10} />
+            <span>LINE {hint.line}</span>
+          </button>
         )}
       </div>
 

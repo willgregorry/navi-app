@@ -7,12 +7,14 @@ interface HintPanelProps {
   hints: SocraticHint[];
   availableHints: number;
   maxHints: number;
+  onFocusLine?: (line: number) => void;
 }
 
 export const HintPanel: React.FC<HintPanelProps> = ({
   hints,
   availableHints,
   maxHints,
+  onFocusLine,
 }) => {
   return (
     <aside className="panel hint-panel">
@@ -64,7 +66,12 @@ export const HintPanel: React.FC<HintPanelProps> = ({
         ) : (
           <div className="hints-list">
             {hints.map((hint, idx) => (
-              <HintCard key={hint.id || idx} hint={hint} index={idx} />
+              <HintCard
+                key={hint.id || idx}
+                hint={hint}
+                index={idx}
+                onFocusLine={onFocusLine}
+              />
             ))}
           </div>
         )}
