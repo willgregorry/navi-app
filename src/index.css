@@ -688,23 +688,65 @@ body {
 }
 
 /* ==========================================================================
-   PANEL 3: SOCRATIC HINTS (UNIQUE ARCHITECTURAL CARD DESIGN, NO BORDER!)
+   PANEL 3: SOCRATIC HINTS (ELEVATED GLASSMORPHIC ARCHITECTURE)
    ========================================================================== */
 
+.active-hint-badge {
+  font-family: 'Fira Code', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  background: var(--text-primary);
+  color: var(--bg-canvas);
+  padding: 1px 6px;
+  border-radius: 999px;
+  letter-spacing: 0.3px;
+  margin-left: auto;
+}
+
 .hint-quota-bar {
-  padding: 10px 16px;
+  padding: 12px 16px;
   background: var(--bg-surface-elevated);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-bottom: 1px solid var(--divider-line);
+}
+
+.quota-text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .quota-label {
   font-family: 'Fira Code', monospace;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   color: var(--text-muted);
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
+}
+
+.quota-meter {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.quota-meter-segment {
+  width: 14px;
+  height: 4px;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+}
+
+.quota-meter-segment.available {
+  background: var(--text-primary);
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
+}
+
+.quota-meter-segment.consumed {
+  background: var(--divider-line);
+  opacity: 0.5;
 }
 
 .quota-pill-mono {
@@ -712,8 +754,12 @@ body {
   align-items: baseline;
   gap: 3px;
   font-family: 'Fira Code', monospace;
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 800;
+  background: var(--bg-card);
+  padding: 4px 10px;
+  border-radius: 6px;
+  box-shadow: var(--highlight-top);
 }
 
 .quota-active {
@@ -734,15 +780,22 @@ body {
   padding: 12px 14px;
   margin-bottom: 16px;
   box-shadow: var(--highlight-top);
+  backdrop-filter: blur(8px);
+}
+
+.guidance-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  color: var(--text-secondary);
 }
 
 .guidance-prefix {
   font-family: 'Fira Code', monospace;
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 700;
-  color: var(--text-muted);
-  display: block;
-  margin-bottom: 4px;
+  letter-spacing: 0.8px;
 }
 
 .socratic-guidance-note p {
@@ -780,82 +833,202 @@ body {
 .hints-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
-/* The Unique Socratic Card (Tonal separation + Monospace Header Stamp, NO generic border!) */
+/* --------------------------------------------------------------------------
+   THE ENHANCED SOCRATIC HINT CARD (GLASSMORPHIC & TACTILE)
+   -------------------------------------------------------------------------- */
+
 .hint-card-unique {
   background: var(--bg-card);
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
   box-shadow: var(--card-shadow), var(--highlight-top);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   position: relative;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease;
+}
+
+.hint-card-unique:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.7), var(--highlight-top);
+}
+
+.hint-card-unique.card-resolved {
+  opacity: 0.65;
 }
 
 .card-top-tag {
   background: var(--bg-surface-elevated);
-  padding: 6px 12px;
+  padding: 8px 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-bottom: 1px solid var(--divider-line);
+}
+
+.card-tag-left {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.card-type-icon {
+  display: flex;
+  align-items: center;
+  color: var(--text-secondary);
 }
 
 .card-tag-mono {
   font-family: 'Fira Code', monospace;
   font-size: 10.5px;
   font-weight: 700;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
   color: var(--text-secondary);
 }
 
-.card-line-pill {
+.card-line-badge {
   font-family: 'Fira Code', monospace;
-  font-size: 10.5px;
-  font-weight: 700;
+  font-size: 10px;
+  font-weight: 800;
   background: var(--bg-card);
-  padding: 1px 6px;
-  border-radius: 3px;
+  padding: 2px 7px;
+  border-radius: 4px;
   color: var(--text-primary);
+  letter-spacing: 0.5px;
+  box-shadow: var(--highlight-top);
 }
 
 .card-body-content {
-  padding: 14px;
+  padding: 16px 14px;
 }
 
 .hint-card-title {
-  font-size: 13.5px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 800;
   color: var(--text-primary);
-  margin-bottom: 6px;
+  margin-bottom: 10px;
   letter-spacing: -0.2px;
+}
+
+.hint-question-container {
+  background: var(--bg-surface-elevated);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 14px;
+  box-shadow: var(--highlight-top);
+}
+
+.prompt-label {
+  font-family: 'Fira Code', monospace;
+  font-size: 9.5px;
+  font-weight: 800;
+  color: var(--text-dim);
+  letter-spacing: 0.8px;
+  display: block;
+  margin-bottom: 6px;
 }
 
 .hint-card-question {
   font-size: 12.5px;
-  line-height: 1.55;
+  line-height: 1.6;
   color: var(--text-secondary);
-  margin-bottom: 12px;
 }
 
-.hint-reflection-box {
-  background: var(--bg-card-subtle);
-  border-radius: 6px;
-  padding: 8px 10px;
+/* Progressive Disclosure Concept Drawer */
+.concept-disclosure-section {
+  margin-bottom: 14px;
+}
+
+.reveal-concept-toggle {
+  width: 100%;
   display: flex;
-  align-items: flex-start;
-  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--bg-card-subtle);
+  color: var(--text-secondary);
+  border: none;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--highlight-top);
+  transition: all 0.12s ease;
 }
 
-.reflection-bullet {
-  font-size: 8px;
+.reveal-concept-toggle:hover {
+  background: var(--bg-surface-elevated);
+  color: var(--text-primary);
+}
+
+.toggle-left {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.hint-reflection-drawer {
+  background: var(--bg-card-subtle);
+  border-radius: 0 0 6px 6px;
+  padding: 10px 12px;
+  margin-top: 2px;
+  animation: slideDown 0.15s ease-out;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.drawer-mono-prefix {
+  font-family: 'Fira Code', monospace;
+  font-size: 9.5px;
+  font-weight: 700;
   color: var(--text-dim);
-  margin-top: 3px;
+  display: block;
+  margin-bottom: 4px;
 }
 
 .reflection-text {
-  font-size: 11.5px;
-  line-height: 1.45;
-  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+/* Card Footer Actions */
+.card-footer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.mark-understood-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--bg-surface-elevated);
+  color: var(--text-muted);
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--highlight-top);
+  transition: all 0.12s ease;
+}
+
+.mark-understood-btn:hover {
+  color: var(--text-primary);
+}
+
+.mark-understood-btn.btn-active {
+  background: var(--text-primary);
+  color: var(--bg-canvas);
+  font-weight: 700;
 }
 
 /* ==========================================================================

@@ -1,7 +1,7 @@
 import React from 'react';
 import type { SocraticHint } from '../../types/hint';
 import { HintCard } from './HintCard';
-import { HelpCircle } from 'lucide-react';
+import { HelpCircle, Sparkles } from 'lucide-react';
 
 interface HintPanelProps {
   hints: SocraticHint[];
@@ -19,10 +19,24 @@ export const HintPanel: React.FC<HintPanelProps> = ({
       <div className="panel-header">
         <HelpCircle size={14} />
         <h2>Socratic Diagnostics</h2>
+        {hints.length > 0 && (
+          <span className="active-hint-badge">{hints.length} Active</span>
+        )}
       </div>
 
       <div className="hint-quota-bar">
-        <span className="quota-label">HINTS REMAINING</span>
+        <div className="quota-text-group">
+          <span className="quota-label">DIAGNOSTIC QUOTA</span>
+          <div className="quota-meter">
+            {Array.from({ length: maxHints }).map((_, idx) => (
+              <span
+                key={idx}
+                className={`quota-meter-segment ${idx < availableHints ? 'available' : 'consumed'}`}
+              />
+            ))}
+          </div>
+        </div>
+
         <div className="quota-pill-mono">
           <span className="quota-active">{availableHints}</span>
           <span className="quota-divider">/</span>
@@ -32,9 +46,12 @@ export const HintPanel: React.FC<HintPanelProps> = ({
 
       <div className="panel-content scrollable">
         <div className="socratic-guidance-note">
-          <span className="guidance-prefix">NOTE //</span>
+          <div className="guidance-header">
+            <Sparkles size={12} />
+            <span className="guidance-prefix">PEDAGOGICAL GUARDRAIL</span>
+          </div>
           <p>
-            Socratic hints guide your conceptual reasoning without ever giving away direct code solutions.
+            Hints isolate structural issues and pose targeted reflective inquiries, requiring you to reason through and repair the defect yourself.
           </p>
         </div>
 
