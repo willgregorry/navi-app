@@ -35,6 +35,12 @@
   --alarm-red: #ef4444;
   --alarm-red-subtle: rgba(239, 68, 68, 0.12);
   --success-green: #22c55e;
+
+  /* Scrollbar Theme Tokens (Dark Mode) */
+  --scrollbar-thumb: rgba(255, 255, 255, 0.24);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.48);
+  --scrollbar-thumb-active: rgba(255, 255, 255, 0.70);
+  --scrollbar-track: rgba(255, 255, 255, 0.04);
 }
 
 [data-theme="light"] {
@@ -67,14 +73,11 @@
   --alarm-red-subtle: rgba(220, 38, 38, 0.1);
   --success-green: #16a34a;
 
-  --scrollbar-thumb: rgba(0, 0, 0, 0.15);
-  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.32);
-}
-
-:root,
-[data-theme="dark"] {
-  --scrollbar-thumb: rgba(255, 255, 255, 0.16);
-  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.35);
+  /* Scrollbar Theme Tokens (Light Mode - Clear Contrast) */
+  --scrollbar-thumb: rgba(0, 0, 0, 0.32);
+  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.55);
+  --scrollbar-thumb-active: rgba(0, 0, 0, 0.75);
+  --scrollbar-track: rgba(0, 0, 0, 0.05);
 }
 
 * {
@@ -82,27 +85,34 @@
   padding: 0;
   box-sizing: border-box;
   scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb) transparent;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
-/* Global Minimalist Scrollbar (No ugly arrows, thin sleek thumb) */
+/* Global Minimalist High-Visibility Scrollbar */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 7px;
+  height: 7px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--scrollbar-track);
+  border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--scrollbar-thumb);
   border-radius: 999px;
-  transition: background 0.15s ease;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  transition: background 0.12s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--scrollbar-thumb-hover);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: var(--scrollbar-thumb-active);
 }
 
 ::-webkit-scrollbar-button {
@@ -113,6 +123,37 @@
 
 ::-webkit-scrollbar-corner {
   background: transparent;
+}
+
+/* Monaco Editor Internal Scrollbars Synchronization */
+.monaco-editor .scrollbar .slider {
+  border-radius: 999px !important;
+  transition: background 0.12s ease !important;
+}
+
+[data-theme="dark"] .monaco-editor .scrollbar .slider {
+  background: rgba(255, 255, 255, 0.22) !important;
+}
+
+[data-theme="dark"] .monaco-editor .scrollbar .slider:hover {
+  background: rgba(255, 255, 255, 0.45) !important;
+}
+
+[data-theme="light"] .monaco-editor .scrollbar .slider {
+  background: rgba(0, 0, 0, 0.32) !important;
+}
+
+[data-theme="light"] .monaco-editor .scrollbar .slider:hover {
+  background: rgba(0, 0, 0, 0.58) !important;
+}
+
+.monaco-editor .scrollbar.vertical,
+.monaco-editor .scrollbar.horizontal {
+  background: var(--scrollbar-track) !important;
+}
+
+.monaco-editor .scrollbar .shadow {
+  display: none !important;
 }
 
 body {
