@@ -16,13 +16,13 @@ export const ProblemPanel: React.FC<ProblemPanelProps> = ({ problem }) => {
 
       <div className="panel-content scrollable">
         <section className="problem-section">
-          <h3>Deskripsi Soal</h3>
+          <h3>Problem Description</h3>
           <p className="problem-text">{problem.description}</p>
         </section>
 
         {problem.constraints.length > 0 && (
           <section className="problem-section">
-            <h3>Batasan (Constraints)</h3>
+            <h3>Constraints</h3>
             <ul className="constraints-list">
               {problem.constraints.map((c, idx) => (
                 <li key={idx}><code>{c}</code></li>
@@ -32,12 +32,12 @@ export const ProblemPanel: React.FC<ProblemPanelProps> = ({ problem }) => {
         )}
 
         <section className="problem-section">
-          <h3>Contoh Kasus Uji</h3>
+          <h3>Sample Test Cases</h3>
           {problem.sampleTestCases.map((tc, idx) => (
             <div key={tc.id || idx} className="sample-card">
               <div className="sample-title">
                 <CheckCircle2 size={13} />
-                <span>Kasus Uji #{idx + 1}</span>
+                <span>Test Case #{idx + 1}</span>
               </div>
               <div className="sample-io">
                 <div className="io-block">

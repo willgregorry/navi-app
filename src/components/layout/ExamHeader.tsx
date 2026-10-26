@@ -44,7 +44,7 @@ export const ExamHeader: React.FC<ExamHeaderProps> = ({
 
         <div className={`violation-badge ${violationCount > 0 ? 'has-violations' : ''}`}>
           <AlertTriangle size={15} />
-          <span>{violationCount} Pelanggaran</span>
+          <span>{violationCount} {violationCount === 1 ? 'Violation' : 'Violations'}</span>
         </div>
 
         {onToggleKiosk && (

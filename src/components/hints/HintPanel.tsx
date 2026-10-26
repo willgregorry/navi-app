@@ -18,11 +18,11 @@ export const HintPanel: React.FC<HintPanelProps> = ({
     <aside className="panel hint-panel">
       <div className="panel-header">
         <Lightbulb size={16} />
-        <h2>Pusat Hint Sokratik</h2>
+        <h2>Socratic Hint Center</h2>
       </div>
 
       <div className="hint-quota-bar">
-        <span className="quota-label">Sisa Kuota Hint:</span>
+        <span className="quota-label">Remaining Hints:</span>
         <div className="quota-pill">
           <strong>{availableHints}</strong> / {maxHints}
         </div>
@@ -32,14 +32,14 @@ export const HintPanel: React.FC<HintPanelProps> = ({
         <div className="socratic-guidance-note">
           <Info size={14} />
           <p>
-            Hint Sokratik dirancang untuk memandu alur berpikir Anda tanpa membocorkan kode jawaban.
+            Socratic hints guide your conceptual reasoning without ever giving away direct code solutions.
           </p>
         </div>
 
         {hints.length === 0 ? (
           <div className="empty-hints-state">
-            <p>Belum ada eror yang terdeteksi.</p>
-            <span>Klik <strong>Jalankan Kode</strong> untuk menguji sintaks dan kasus uji Anda.</span>
+            <p>No errors detected.</p>
+            <span>Click <strong>Run Code</strong> to validate your syntax and verify test cases.</span>
           </div>
         ) : (
           <div className="hints-list">

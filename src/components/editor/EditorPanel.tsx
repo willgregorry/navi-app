@@ -35,7 +35,7 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
             className="action-btn run-btn"
           >
             <Play size={14} />
-            <span>{isRunning ? 'Menjalankan...' : 'Jalankan Kode'}</span>
+            <span>{isRunning ? 'Running...' : 'Run Code'}</span>
           </button>
 
           <button
@@ -44,7 +44,7 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
             className="action-btn submit-btn"
           >
             <CheckCircle size={14} />
-            <span>Kumpulkan Jawaban</span>
+            <span>Submit Solution</span>
           </button>
         </div>
       </div>
@@ -72,18 +72,18 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
       <div className="terminal-drawer">
         <div className="terminal-header">
           <TerminalIcon size={14} />
-          <span>Keluaran Terminal (Stdout / Stderr)</span>
+          <span>Terminal Output (Stdout / Stderr)</span>
         </div>
         <div className="terminal-body">
           {isRunning ? (
-            <div className="terminal-running">Menjalankan kode di sandbox...</div>
+            <div className="terminal-running">Executing code in secure sandbox...</div>
           ) : executionResult ? (
             <pre className={executionResult.isSuccess ? 'output-success' : 'output-error'}>
-              {executionResult.stderr || executionResult.stdout || 'Program selesai tanpa output.'}
+              {executionResult.stderr || executionResult.stdout || 'Program completed with no output.'}
             </pre>
           ) : (
             <div className="terminal-placeholder">
-              Keluaran program dan pesan eror akan ditampilkan di sini setelah Anda mengklik Jalankan Kode.
+              Program output and error diagnostics will appear here once you run your code.
             </div>
           )}
         </div>

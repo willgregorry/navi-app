@@ -3,16 +3,16 @@ import type { SocraticHint } from '../types/hint';
 
 export const SAMPLE_PROBLEM: Problem = {
   id: 'prob-prime-01',
-  title: 'Pengecekan Bilangan Prima',
+  title: 'Prime Number Verification',
   description:
-    'Buatlah sebuah fungsi bernama `is_prime(n)` yang menerima satu bilangan bulat positif `n` dan mengembalikan `True` jika bilangan tersebut merupakan bilangan prima, serta `False` jika bukan bilangan prima.\n\nBilangan prima adalah bilangan asli lebih besar dari 1 yang faktor pembaginya hanya 1 dan bilangan itu sendiri.',
+    'Write a function named `is_prime(n)` that accepts a positive integer `n` and returns `True` if `n` is a prime number, and `False` otherwise.\n\nA prime number is a natural number greater than 1 whose only divisors are 1 and itself.',
   constraints: [
     '1 <= n <= 10^6',
-    'Fungsi harus mengembalikan nilai boolean (True / False)',
-    'Kompleksitas waktu diharapkan optimal (O(sqrt(N)))',
+    'The function must return a boolean value (True / False)',
+    'Time complexity is expected to be optimal (O(sqrt(N)))',
   ],
   starterCode: `def is_prime(n):
-    # Tulis logika pengecekan prima di bawah ini
+    # Implement prime check logic below
     if n <= 1:
         return False
         
@@ -22,7 +22,7 @@ export const SAMPLE_PROBLEM: Problem = {
             
     return True
 
-# Contoh uji coba
+# Sample execution
 print(is_prime(7))
 `,
   sampleTestCases: [
@@ -43,7 +43,7 @@ export function analyzeCodeLocally(code: string): {
 } {
   const hints: SocraticHint[] = [];
 
-  // 1. Check for missing colon after for loop
+  // 1. Check for missing colon after control block
   const lines = code.split('\n');
   lines.forEach((line, index) => {
     const trimmed = line.trim();
@@ -56,9 +56,9 @@ export function analyzeCodeLocally(code: string): {
         id: `syntax-colon-${index}`,
         type: 'syntax',
         line: index + 1,
-        title: 'Tanda Baca Akhir Blok Pernyataan',
-        question: `Perhatikan baris ke-${index + 1} (${trimmed}). Dalam sintaks Python, karakter apa yang wajib diletakkan di akhir header perulangan atau pengkondisian?`,
-        conceptHint: 'Setiap blok kontrol (for/if/while/def) di Python harus diakhiri tanda titik dua (:).',
+        title: 'Block Statement Delimiter Missing',
+        question: `Take a look at line ${index + 1} (${trimmed}). In Python syntax, what character is mandatory at the end of a loop, conditional, or function header?`,
+        conceptHint: 'Every compound statement header (for/if/while/def) in Python must terminate with a colon (:).',
       });
     }
   });
@@ -78,16 +78,16 @@ export function analyzeCodeLocally(code: string): {
       id: 'logic-efficiency',
       type: 'logic',
       line: 6,
-      title: 'Optimasi Rentang Pembagi',
+      title: 'Divisor Search Range Optimization',
       question:
-        'Logika Anda sudah bisa berjalan, tetapi apakah benar kita perlu menguji pembagi sampai angka n-1? Sampai batas manakah pembagian terbesar yang mungkin bagi n?',
-      conceptHint: 'Faktor pembagi tidak trivial selalu berpasangan dan tidak pernah melebihi akar kuadrat dari n.',
+        'Your logic is functional, but do we truly need to test divisors all the way up to n - 1? What is the theoretical upper bound for the smallest non-trivial divisor of n?',
+      conceptHint: 'Non-trivial factors always appear in complementary pairs and never exceed the square root of n (int(n**0.5) + 1).',
     });
   }
 
   return {
     isSuccess: true,
-    stdout: 'True\nSemua kasus uji contoh lolos! (3/3)',
+    stdout: 'True\nAll sample test cases passed! (3/3)',
     stderr: '',
     hints,
   };

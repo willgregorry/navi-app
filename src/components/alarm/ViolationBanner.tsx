@@ -21,19 +21,19 @@ export const ViolationBanner: React.FC<ViolationBannerProps> = ({
           <AlertOctagon size={44} className="siren-pulse" />
         </div>
 
-        <h2 className="violation-title">FOKUS UJIAN TERGANGGU!</h2>
+        <h2 className="violation-title">EXAM FOCUS COMPROMISED!</h2>
         <p className="violation-desc">
-          Anda terdeteksi berpindah aplikasi atau menekan tombol Alt+Tab.
-          Pelanggaran ke-<strong>{violationCount}</strong> telah dicatat dan dilaporkan langsung ke dasbor guru.
+          You were detected switching applications or pressing Alt+Tab.
+          Violation #<strong>{violationCount}</strong> has been logged and immediately transmitted to the instructor dashboard.
         </p>
 
         <div className="alarm-indicator">
           <Volume2 size={16} />
-          <span>Alarm anti-distraksi sedang berbunyi...</span>
+          <span>Active anti-distraction siren sounding...</span>
         </div>
 
         <button onClick={onDismiss} className="return-btn">
-          Kembali ke Ujian Sekarang
+          Return to Assessment Now
         </button>
       </div>
     </div>

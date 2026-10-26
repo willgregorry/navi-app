@@ -16,10 +16,10 @@ export const HintCard: React.FC<HintCardProps> = ({ hint, index }) => {
         <div className="hint-badge-group">
           <span className={`hint-type-tag ${hint.type}`}>
             {isSyntax ? <AlertCircle size={12} /> : <HelpCircle size={12} />}
-            {isSyntax ? 'Eror Sintaks' : 'Eror Logika'}
+            {isSyntax ? 'Syntax Error' : 'Logic Error'}
           </span>
           {hint.line !== undefined && (
-            <span className="hint-line-tag">Baris ke-{hint.line}</span>
+            <span className="hint-line-tag">Line {hint.line}</span>
           )}
         </div>
         <span className="hint-number">#{index + 1}</span>

@@ -73,7 +73,7 @@ export const App: React.FC = () => {
   };
 
   const handleSubmit = () => {
-    alert('Jawaban berhasil dikumpulkan! Ujian selesai.');
+    alert('Solution successfully submitted! The assessment is complete.');
   };
 
   if (!isJoined) {

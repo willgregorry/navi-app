@@ -14,7 +14,7 @@ export const JoinRoomView: React.FC<JoinRoomViewProps> = ({ onJoin }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !studentId.trim() || !roomCode.trim()) {
-      setError('Mohon lengkapi semua kolom.');
+      setError('Please fill in all required fields.');
       return;
     }
     setError('');
@@ -29,18 +29,18 @@ export const JoinRoomView: React.FC<JoinRoomViewProps> = ({ onJoin }) => {
             <img src="/navi-favicon.png" alt="Navi" className="join-logo-img" />
           </div>
           <h1>Navi Kiosk</h1>
-          <p className="subtitle">Platform Ujian Koding Python Berbasis Kiosk Terpadu</p>
+          <p className="subtitle">Secure Python Assessment Platform with Socratic Guidance</p>
         </div>
 
         <form onSubmit={handleSubmit} className="join-form">
           {error && <div className="form-error">{error}</div>}
 
           <div className="form-group">
-            <label htmlFor="student-name">Nama Lengkap</label>
+            <label htmlFor="student-name">Full Name</label>
             <input
               id="student-name"
               type="text"
-              placeholder="Contoh: Willy Gregory"
+              placeholder="e.g., Willy Gregory"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -48,11 +48,11 @@ export const JoinRoomView: React.FC<JoinRoomViewProps> = ({ onJoin }) => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="student-id">NIM / Nomor Induk</label>
+            <label htmlFor="student-id">Student ID / NIM</label>
             <input
               id="student-id"
               type="text"
-              placeholder="Contoh: 215150200111001"
+              placeholder="e.g., 215150200111001"
               value={studentId}
               onChange={(e) => setStudentId(e.target.value)}
               required
@@ -60,11 +60,11 @@ export const JoinRoomView: React.FC<JoinRoomViewProps> = ({ onJoin }) => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="room-code">Kode Ruangan Ujian</label>
+            <label htmlFor="room-code">Assessment Room Code</label>
             <input
               id="room-code"
               type="text"
-              placeholder="Contoh: NAVI-8392"
+              placeholder="e.g., NAVI-8392"
               value={roomCode}
               onChange={(e) => setRoomCode(e.target.value)}
               className="room-input"
@@ -75,12 +75,12 @@ export const JoinRoomView: React.FC<JoinRoomViewProps> = ({ onJoin }) => {
           <div className="kiosk-notice">
             <ShieldCheck size={16} />
             <span>
-              Saat ujian dimulai, aplikasi akan memasuki mode Kiosk layar penuh dan memantau fokus jendela.
+              Once the exam starts, the app enters fullscreen Kiosk mode and monitors window focus integrity.
             </span>
           </div>
 
           <button type="submit" className="join-submit-btn">
-            <span>Masuk ke Ruangan Ujian</span>
+            <span>Enter Assessment Room</span>
             <ArrowRight size={16} />
           </button>
         </form>
