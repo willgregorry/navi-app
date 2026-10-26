@@ -38,14 +38,14 @@ export function useSocraticAI(
           error_type: errorType,
           error_message: errorMessage,
           faulty_line_number: targetLine,
-          language: 'id',
+          language: 'en',
         });
 
         const newHint: SocraticHint = {
           id: `hint-${Date.now()}`,
           type: errorType.toLowerCase().includes('syntax') ? 'syntax' : 'logic',
           line: response.target_line_number || targetLine || undefined,
-          title: `Petunjuk Socratic (${problem.title})`,
+          title: `Socratic Guidance (${problem.title})`,
           question: response.hint_text,
           conceptHint: `Engine: ${response.engine_used.toUpperCase()}`,
         };

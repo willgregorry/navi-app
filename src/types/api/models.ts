@@ -146,7 +146,7 @@ export interface SocraticHintRequest {
   error_type: string;
   error_message: string;
   faulty_line_number?: number | null;
-  language?: 'id' | 'en';
+  language?: 'en' | 'id';
 }
 
 export interface SocraticHintResponse {

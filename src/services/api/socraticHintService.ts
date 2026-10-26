@@ -12,14 +12,18 @@ export async function requestSocraticHint(
   payload: SocraticHintRequest
 ): Promise<SocraticHintResponse> {
   try {
-    const response = await apiClient.post<SocraticHintResponse>('/hints/request', payload);
+    const finalPayload: SocraticHintRequest = {
+      language: 'en',
+      ...payload,
+    };
+    const response = await apiClient.post<SocraticHintResponse>('/hints/request', finalPayload);
     return response.data;
   } catch (error: any) {
     const message =
       error.response?.data?.detail ||
       error.response?.data?.message ||
       error.message ||
-      'Gagal mendapatkan respon dari Socratic AI engine.';
+      'Failed to receive Socratic guidance from AI engine.';
     throw new Error(typeof message === 'string' ? message : JSON.stringify(message));
   }
 }
