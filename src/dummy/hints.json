@@ -1,0 +1,18 @@
+{
+  "hints": [
+    {
+      "id": "syntax-colon",
+      "type": "syntax",
+      "title": "Block Statement Delimiter Missing",
+      "question": "In Python syntax, which character is mandatory at the end of a header line to begin an indented block?",
+      "conceptHint": "Compound statements like if, for, while, and def must always terminate with a colon (:)."
+    },
+    {
+      "id": "logic-efficiency",
+      "type": "logic",
+      "title": "Divisor Search Range Optimization",
+      "question": "Your logic is functional, but do we truly need to test divisors all the way up to n - 1? What is the theoretical upper bound for the smallest non-trivial divisor of n?",
+      "conceptHint": "Non-trivial factors always appear in complementary pairs and never exceed the square root of n (int(n**0.5) + 1)."
+    }
+  ]
+}

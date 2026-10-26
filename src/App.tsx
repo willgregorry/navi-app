@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ExamHeader } from './components/layout/ExamHeader';
 import { ResizablePanels } from './components/layout/ResizablePanels';
 import { ProblemPanel } from './components/problem/ProblemPanel';
@@ -10,8 +10,8 @@ import { JoinRoomView } from './components/modals/JoinRoomView';
 import { ChallengeListView } from './components/challenges/ChallengeListView';
 import { useFocusGuard } from './hooks/useFocusGuard';
 import { useTheme } from './hooks/useTheme';
-import { SAMPLE_PROBLEMS } from './services/mockExam';
 import { executePython } from './services/pythonRunner';
+import { fetchChallenges, submitChallengeSolution, logViolationEvent } from './services/api/examApi';
 import type { Problem, ExecutionResult } from './types/exam';
 import type { SocraticHint } from './types/hint';
 import './index.css';
@@ -23,18 +23,12 @@ export const App: React.FC = () => {
   const [studentId, setStudentId] = useState('');
   const [roomCode, setRoomCode] = useState('');
 
-  // Active problem selection (null = Challenge List View)
+  // Problem dataset fetched via Axios API layer
+  const [problems, setProblems] = useState<Problem[]>([]);
   const [activeProblem, setActiveProblem] = useState<Problem | null>(null);
 
   // Student progress per problem
-  const [codes, setCodes] = useState<Record<string, string>>(() => {
-    const initial: Record<string, string> = {};
-    SAMPLE_PROBLEMS.forEach((p) => {
-      initial[p.id] = p.starterCode;
-    });
-    return initial;
-  });
-
+  const [codes, setCodes] = useState<Record<string, string>>({});
   const [solvedProblemIds, setSolvedProblemIds] = useState<string[]>([]);
   const [inProgressProblemIds, setInProgressProblemIds] = useState<string[]>([]);
   const [executionResults, setExecutionResults] = useState<Record<string, ExecutionResult | null>>({});
@@ -43,10 +37,35 @@ export const App: React.FC = () => {
   const [isRunning, setIsRunning] = useState(false);
   const [isKioskActive, setIsKioskActive] = useState(false);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
+  const [focusedLine, setFocusedLine] = useState<number | null>(null);
 
-  // Focus guard listens to window blur (Alt+Tab), triggers siren & violation count
+  // Load challenges using Axios on mount or room change
+  useEffect(() => {
+    async function loadData() {
+      const data = await fetchChallenges(roomCode || undefined);
+      setProblems(data);
+      setCodes((prev) => {
+        const next = { ...prev };
+        data.forEach((p) => {
+          if (!next[p.id]) next[p.id] = p.starterCode;
+        });
+        return next;
+      });
+    }
+    loadData();
+  }, [roomCode]);
+
+  // Focus guard listens to window blur (Alt+Tab), triggers siren & violation telemetry
   const { violationCount, isDistracted, dismissWarning } = useFocusGuard({
     enabled: isJoined,
+    onViolation: (count) => {
+      logViolationEvent({
+        roomCode,
+        studentId,
+        count,
+        timestamp: Date.now(),
+      });
+    },
   });
 
   const handleJoin = async (name: string, id: string, room: string) => {
@@ -54,8 +73,11 @@ export const App: React.FC = () => {
     setStudentId(id);
     setRoomCode(room);
     setIsJoined(true);
-    // Student lands on Challenge List View first!
     setActiveProblem(null);
+
+    // Fetch latest challenges for this room via Axios
+    const roomProblems = await fetchChallenges(room);
+    setProblems(roomProblems);
 
     // Request Electron to enter Kiosk Mode
     if (window.naviElectron) {
@@ -70,6 +92,13 @@ export const App: React.FC = () => {
       const res = await window.naviElectron.setKiosk(nextState);
       setIsKioskActive(Boolean(res?.isKiosk));
     }
+  };
+
+  const handleFocusLine = (line: number) => {
+    setFocusedLine(null);
+    setTimeout(() => {
+      setFocusedLine(line);
+    }, 10);
   };
 
   const handleCodeChange = (newCode: string | undefined) => {
@@ -109,6 +138,10 @@ export const App: React.FC = () => {
       if (result.hints && result.hints.length > 0) {
         setHintsByProblem((prev) => ({ ...prev, [activeProblem.id]: result.hints }));
         setAvailableHints((prev) => Math.max(0, prev - 1));
+        const firstLine = result.hints.find((h) => h.line)?.line;
+        if (firstLine) {
+          handleFocusLine(firstLine);
+        }
       } else {
         setHintsByProblem((prev) => ({ ...prev, [activeProblem.id]: [] }));
       }
@@ -132,6 +165,21 @@ export const App: React.FC = () => {
     if (!solvedProblemIds.includes(activeProblem.id)) {
       setSolvedProblemIds((prev) => [...prev, activeProblem.id]);
     }
+
+    const currentCode = codes[activeProblem.id] || activeProblem.starterCode;
+
+    // Dispatch submission to Axios API
+    submitChallengeSolution({
+      roomCode,
+      studentName,
+      studentId,
+      problemId: activeProblem.id,
+      code: currentCode,
+      isSuccess: true,
+      passedCount: activeProblem.sampleTestCases.length,
+      totalCount: activeProblem.sampleTestCases.length,
+    });
+
     setIsSubmitModalOpen(true);
   };
 
@@ -143,15 +191,6 @@ export const App: React.FC = () => {
     setIsSubmitModalOpen(false);
     setActiveProblem(null);
     setIsJoined(false);
-  };
-
-  const [focusedLine, setFocusedLine] = useState<number | null>(null);
-
-  const handleFocusLine = (line: number) => {
-    setFocusedLine(null);
-    setTimeout(() => {
-      setFocusedLine(line);
-    }, 10);
   };
 
   // 1. Entrance Form
@@ -173,7 +212,7 @@ export const App: React.FC = () => {
           roomCode={roomCode}
           studentName={studentName}
           studentId={studentId}
-          problems={SAMPLE_PROBLEMS}
+          problems={problems}
           solvedProblemIds={solvedProblemIds}
           inProgressProblemIds={inProgressProblemIds}
           onSelectProblem={(problem) => setActiveProblem(problem)}
@@ -201,7 +240,7 @@ export const App: React.FC = () => {
           violationCount={violationCount}
           hintsUsed={5 - availableHints}
           testCasesPassed={solvedProblemIds.length}
-          totalTestCases={SAMPLE_PROBLEMS.length}
+          totalTestCases={problems.length}
         />
       </>
     );

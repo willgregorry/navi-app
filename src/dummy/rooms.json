@@ -1,0 +1,17 @@
+{
+  "rooms": [
+    {
+      "code": "NAVI-8392",
+      "title": "Python Midterm Assessment Challenges",
+      "durationMinutes": 120,
+      "totalPoints": 110,
+      "maxHints": 5,
+      "problemIds": [
+        "prob-prime-01",
+        "prob-twosum-02",
+        "prob-parentheses-03",
+        "prob-palindrome-04"
+      ]
+    }
+  ]
+}
