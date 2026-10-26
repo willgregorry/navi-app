@@ -1922,11 +1922,13 @@ body {
 }
 
 .challenge-card.card-solved {
-  border-left: 3px solid var(--success-green);
+  background: var(--bg-surface);
+  box-shadow: var(--highlight-top);
 }
 
 .challenge-card.card-inprogress {
-  border-left: 3px solid var(--text-primary);
+  background: var(--bg-surface);
+  box-shadow: var(--highlight-top);
 }
 
 .challenge-card-left {
@@ -1937,33 +1939,60 @@ body {
 }
 
 .status-indicator {
-  margin-top: 2px;
+  margin-top: 3px;
   flex-shrink: 0;
 }
 
-.icon-solved {
-  color: var(--success-green);
+.status-mark-solved {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--text-primary);
+  color: var(--bg-canvas);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.icon-inprogress {
+.status-mark-inprogress {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--bg-surface-elevated);
   color: var(--text-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: var(--highlight-top);
 }
 
-.icon-unattempted {
+.status-mark-unattempted {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--bg-surface-elevated);
   color: var(--text-dim);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: var(--highlight-top);
 }
 
 .challenge-info {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   flex: 1;
 }
 
 .challenge-title-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .challenge-index {
@@ -1979,46 +2008,61 @@ body {
   color: var(--text-primary);
 }
 
+.solved-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  background: var(--bg-surface-elevated);
+  color: var(--text-primary);
+  border-radius: 4px;
+  font-family: 'Fira Code', monospace;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  box-shadow: var(--highlight-top);
+}
+
 .challenge-excerpt {
   font-size: 13px;
   color: var(--text-secondary);
-  line-height: 1.45;
-  max-width: 650px;
+  line-height: 1.5;
+  max-width: 680px;
 }
 
 .challenge-tags {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
   margin-top: 4px;
 }
 
-.tag-category,
-.tag-difficulty,
-.tag-points {
+.tag-chip {
   font-family: 'Fira Code', monospace;
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 600;
-  padding: 3px 8px;
+  padding: 4px 10px;
   border-radius: 4px;
   background: var(--bg-surface-elevated);
   color: var(--text-muted);
   box-shadow: var(--highlight-top);
+  white-space: nowrap;
 }
 
-.tag-difficulty.diff-easy {
-  color: var(--success-green);
-}
-
-.tag-difficulty.diff-medium {
+.tag-chip.tag-difficulty.diff-easy {
   color: var(--text-primary);
 }
 
-.tag-difficulty.diff-hard {
+.tag-chip.tag-difficulty.diff-medium {
+  color: var(--text-primary);
+}
+
+.tag-chip.tag-difficulty.diff-hard {
   color: var(--alarm-red);
 }
 
-.tag-points {
+.tag-chip.tag-points {
   color: var(--text-secondary);
   font-weight: 700;
 }
@@ -2027,7 +2071,7 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 10px 16px;
+  padding: 10px 18px;
   background: var(--btn-secondary-bg);
   color: var(--btn-secondary-text);
   border: none;
@@ -2047,45 +2091,62 @@ body {
 
 .challenge-action-btn.btn-solved {
   background: var(--bg-surface-elevated);
-  color: var(--success-green);
-}
-
-/* Panel Header Tags for ProblemPanel */
-.panel-header-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.panel-header-tags {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.badge-category,
-.badge-diff,
-.badge-pts {
-  font-family: 'Fira Code', monospace;
-  font-size: 10px;
-  font-weight: 600;
-  padding: 2px 6px;
-  border-radius: 3px;
-  background: var(--bg-surface-elevated);
-  color: var(--text-muted);
-  box-shadow: var(--highlight-top);
-}
-
-.badge-diff.diff-easy {
-  color: var(--success-green);
-}
-
-.badge-diff.diff-medium {
   color: var(--text-primary);
 }
 
-.badge-diff.diff-hard {
+/* ==========================================================================
+   PROBLEM PANEL: SPACIOUS HERO HEADER & METADATA SECTION
+   ========================================================================== */
+
+.problem-hero-section {
+  margin-bottom: 22px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--divider-line);
+}
+
+.problem-meta-pills {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.meta-pill {
+  font-family: 'Fira Code', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: var(--bg-surface-elevated);
+  color: var(--text-secondary);
+  box-shadow: var(--highlight-top);
+  white-space: nowrap;
+}
+
+.meta-pill.pill-points {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.meta-pill.pill-diff.diff-easy {
+  color: var(--text-primary);
+}
+
+.meta-pill.pill-diff.diff-medium {
+  color: var(--text-primary);
+}
+
+.meta-pill.pill-diff.diff-hard {
   color: var(--alarm-red);
+}
+
+.problem-title-display {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  color: var(--text-primary);
+  line-height: 1.35;
 }
 
 

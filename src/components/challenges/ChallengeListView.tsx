@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  CheckCircle2,
+  Check,
   Clock,
   Circle,
   ArrowRight,
@@ -155,18 +155,30 @@ export const ChallengeListView: React.FC<ChallengeListViewProps> = ({
                   <div className="challenge-card-left">
                     <div className="status-indicator">
                       {isSolved ? (
-                        <CheckCircle2 size={20} className="icon-solved" />
+                        <div className="status-mark-solved" title="Solved">
+                          <Check size={12} strokeWidth={3} />
+                        </div>
                       ) : isInProgress ? (
-                        <Clock size={20} className="icon-inprogress" />
+                        <div className="status-mark-inprogress" title="In Progress">
+                          <Clock size={12} />
+                        </div>
                       ) : (
-                        <Circle size={20} className="icon-unattempted" />
+                        <div className="status-mark-unattempted" title="Unattempted">
+                          <Circle size={14} />
+                        </div>
                       )}
                     </div>
 
                     <div className="challenge-info">
                       <div className="challenge-title-row">
-                        <span className="challenge-index">#{index + 1}</span>
+                        <span className="challenge-index">#{String(index + 1).padStart(2, '0')}</span>
                         <h3 className="challenge-title">{problem.title}</h3>
+                        {isSolved && (
+                          <span className="solved-badge-pill">
+                            <Check size={10} strokeWidth={3} />
+                            <span>SOLVED</span>
+                          </span>
+                        )}
                       </div>
 
                       <p className="challenge-excerpt">
@@ -174,13 +186,13 @@ export const ChallengeListView: React.FC<ChallengeListViewProps> = ({
                       </p>
 
                       <div className="challenge-tags">
-                        <span className="tag-category">{problem.category}</span>
+                        <span className="tag-chip tag-category">{problem.category}</span>
                         <span
-                          className={`tag-difficulty diff-${problem.difficulty.toLowerCase()}`}
+                          className={`tag-chip tag-difficulty diff-${problem.difficulty.toLowerCase()}`}
                         >
                           {problem.difficulty}
                         </span>
-                        <span className="tag-points">{problem.points} pts</span>
+                        <span className="tag-chip tag-points">{problem.points} Points</span>
                       </div>
                     </div>
                   </div>
@@ -197,12 +209,12 @@ export const ChallengeListView: React.FC<ChallengeListViewProps> = ({
                     >
                       <span>
                         {isSolved
-                          ? 'Review Solution'
+                          ? 'Review Code'
                           : isInProgress
                           ? 'Continue'
                           : 'Solve Challenge'}
                       </span>
-                      <ArrowRight size={14} />
+                      <ArrowRight size={13} />
                     </button>
                   </div>
                 </div>

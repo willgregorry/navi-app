@@ -10,20 +10,23 @@ export const ProblemPanel: React.FC<ProblemPanelProps> = ({ problem }) => {
   return (
     <aside className="panel problem-panel">
       <div className="panel-header">
-        <div className="panel-header-title">
-          <Terminal size={14} />
-          <h2>{problem.title}</h2>
-        </div>
-        <div className="panel-header-tags">
-          <span className="badge-category">{problem.category}</span>
-          <span className={`badge-diff diff-${problem.difficulty.toLowerCase()}`}>
-            {problem.difficulty}
-          </span>
-          <span className="badge-pts">{problem.points} pts</span>
-        </div>
+        <Terminal size={14} />
+        <h2>Problem Statement</h2>
       </div>
 
       <div className="panel-content scrollable">
+        {/* Spacious, uncrowded problem hero header */}
+        <div className="problem-hero-section">
+          <div className="problem-meta-pills">
+            <span className="meta-pill pill-category">{problem.category}</span>
+            <span className={`meta-pill pill-diff diff-${problem.difficulty.toLowerCase()}`}>
+              {problem.difficulty}
+            </span>
+            <span className="meta-pill pill-points">{problem.points} Points</span>
+          </div>
+          <h1 className="problem-title-display">{problem.title}</h1>
+        </div>
+
         <section className="problem-section">
           <div className="section-title-label">01 // SPECIFICATION</div>
           <p className="problem-text">{problem.description}</p>
