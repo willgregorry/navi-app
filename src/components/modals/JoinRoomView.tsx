@@ -21,12 +21,23 @@ export const JoinRoomView: React.FC<JoinRoomViewProps> = ({
 }) => {
   const [name, setName] = useState('');
   const [studentId, setStudentId] = useState('');
-  const [roomCode, setRoomCode] = useState('');
+  const [roomSuffix, setRoomSuffix] = useState('');
   const [errors, setErrors] = useState<FormErrors>({});
 
   const nameInputRef = useRef<HTMLInputElement>(null);
   const studentIdInputRef = useRef<HTMLInputElement>(null);
   const roomCodeInputRef = useRef<HTMLInputElement>(null);
+
+  const handleRoomChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let val = e.target.value.toUpperCase();
+    if (val.startsWith('NAVI-')) {
+      val = val.slice(5);
+    }
+    setRoomSuffix(val);
+    if (errors.roomCode) {
+      setErrors((prev) => ({ ...prev, roomCode: undefined }));
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,8 +49,9 @@ export const JoinRoomView: React.FC<JoinRoomViewProps> = ({
     if (!studentId.trim()) {
       newErrors.studentId = 'Please enter your student ID / NIM.';
     }
-    if (!roomCode.trim()) {
-      newErrors.roomCode = 'Please specify the assessment room code.';
+    const cleanSuffix = roomSuffix.trim().toUpperCase();
+    if (!cleanSuffix) {
+      newErrors.roomCode = 'Please enter the assessment room code.';
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -56,7 +68,8 @@ export const JoinRoomView: React.FC<JoinRoomViewProps> = ({
     }
 
     setErrors({});
-    onJoin(name.trim(), studentId.trim(), roomCode.trim().toUpperCase());
+    const fullRoomCode = `NAVI-${cleanSuffix}`;
+    onJoin(name.trim().toUpperCase(), studentId.trim(), fullRoomCode);
   };
 
   return (
@@ -87,15 +100,15 @@ export const JoinRoomView: React.FC<JoinRoomViewProps> = ({
               ref={nameInputRef}
               id="student-name"
               type="text"
-              placeholder="e.g., Willy Gregory"
+              placeholder="ENTER FULL NAME"
               value={name}
               onChange={(e) => {
-                setName(e.target.value);
+                setName(e.target.value.toUpperCase());
                 if (errors.name) {
                   setErrors((prev) => ({ ...prev, name: undefined }));
                 }
               }}
-              className={errors.name ? 'input-has-error' : ''}
+              className={`name-input ${errors.name ? 'input-has-error' : ''}`}
               autoComplete="name"
             />
             {errors.name && (
@@ -112,7 +125,7 @@ export const JoinRoomView: React.FC<JoinRoomViewProps> = ({
               ref={studentIdInputRef}
               id="student-id"
               type="text"
-              placeholder="e.g., 215150200111001"
+              placeholder="ENTER STUDENT ID / NIM"
               value={studentId}
               onChange={(e) => {
                 setStudentId(e.target.value);
@@ -133,21 +146,19 @@ export const JoinRoomView: React.FC<JoinRoomViewProps> = ({
 
           <div className="form-group">
             <label htmlFor="room-code">ASSESSMENT ROOM CODE</label>
-            <input
-              ref={roomCodeInputRef}
-              id="room-code"
-              type="text"
-              placeholder="e.g., NAVI-8392"
-              value={roomCode}
-              onChange={(e) => {
-                setRoomCode(e.target.value);
-                if (errors.roomCode) {
-                  setErrors((prev) => ({ ...prev, roomCode: undefined }));
-                }
-              }}
-              className={`room-input ${errors.roomCode ? 'input-has-error' : ''}`}
-              autoComplete="off"
-            />
+            <div className={`room-input-group ${errors.roomCode ? 'group-has-error' : ''}`}>
+              <span className="room-prefix-tag">NAVI-</span>
+              <input
+                ref={roomCodeInputRef}
+                id="room-code"
+                type="text"
+                placeholder="8392"
+                value={roomSuffix}
+                onChange={handleRoomChange}
+                className="room-suffix-input"
+                autoComplete="off"
+              />
+            </div>
             {errors.roomCode && (
               <div className="field-error-msg">
                 <AlertCircle size={12} />
