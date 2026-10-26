@@ -5,6 +5,11 @@
    Supports full Dark Mode & Light Mode
    ========================================================================== */
 
+:root {
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'Fira Code', 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+}
+
 :root,
 [data-theme="dark"] {
   --bg-canvas: #09090b;        /* Pure obsidian black */
@@ -159,12 +164,21 @@
 body {
   background-color: var(--bg-canvas);
   color: var(--text-primary);
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-sans);
   overflow: hidden;
   height: 100vh;
   width: 100vw;
   user-select: none;
   transition: background-color 0.2s ease, color 0.2s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
 }
 
 /* ==========================================================================
@@ -259,10 +273,11 @@ body {
 
 .join-form label {
   display: block;
+  font-family: var(--font-sans);
   font-size: 11px;
-  font-family: 'Fira Code', monospace;
-  font-weight: 600;
-  letter-spacing: 0.8px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
   color: var(--text-muted);
   margin-bottom: 6px;
 }
@@ -300,15 +315,15 @@ body {
   align-items: center;
   gap: 5px;
   margin-top: 6px;
-  font-size: 11px;
-  font-family: 'Fira Code', monospace;
-  font-weight: 500;
+  font-size: 11.5px;
+  font-family: var(--font-sans);
+  font-weight: 600;
   color: var(--alarm-red);
   animation: fadeIn 0.15s ease-in-out;
 }
 
 .join-form .room-input {
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-mono);
   font-weight: 600;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -426,8 +441,8 @@ body {
 }
 
 .room-badge {
-  font-family: 'Fira Code', monospace;
-  font-size: 10.5px;
+  font-family: var(--font-mono);
+  font-size: 11px;
   font-weight: 700;
   padding: 0 8px;
   height: 22px;
@@ -494,7 +509,7 @@ body {
 }
 
 .student-nim {
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
   color: var(--text-muted);
   display: inline-flex;
@@ -539,7 +554,7 @@ body {
 .timer-badge {
   background: var(--bg-surface-elevated);
   color: var(--text-primary);
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-mono);
 }
 
 .violation-badge {
@@ -742,7 +757,7 @@ body {
 }
 
 .section-title-label {
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.8px;
@@ -777,13 +792,13 @@ body {
 }
 
 .mono-dot {
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
   color: var(--text-muted);
 }
 
 .constraint-item code {
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
   color: var(--text-primary);
 }
@@ -810,7 +825,7 @@ body {
 }
 
 .sample-index-badge {
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-mono);
   font-size: 10.5px;
   font-weight: 700;
   letter-spacing: 0.8px;
@@ -829,14 +844,14 @@ body {
   padding: 8px;
   border-radius: 4px;
   margin-top: 4px;
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
   color: var(--text-primary);
   overflow-x: auto;
 }
 
 .io-heading {
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 600;
   color: var(--text-muted);
@@ -873,14 +888,14 @@ body {
 }
 
 .file-name {
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-mono);
   font-size: 12.5px;
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .lang-tag {
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
   background: var(--bg-surface-elevated);
   color: var(--text-muted);
@@ -898,7 +913,7 @@ body {
   color: var(--alarm-red);
   border: none;
   border-radius: 4px;
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
@@ -1003,7 +1018,7 @@ body {
   gap: 6px;
   padding: 0 14px;
   font-size: 11px;
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-mono);
   font-weight: 600;
   color: var(--text-muted);
 }
@@ -1012,7 +1027,7 @@ body {
   flex: 1;
   padding: 12px 14px;
   overflow-y: auto;
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
 }
 
@@ -1024,7 +1039,7 @@ body {
 
 .terminal-stdout {
   margin: 0;
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
   line-height: 1.6;
   white-space: pre-wrap;
@@ -1038,7 +1053,7 @@ body {
 
 .terminal-stderr {
   margin: 0;
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
   line-height: 1.6;
   white-space: pre-wrap;
@@ -1069,12 +1084,12 @@ body {
    ========================================================================== */
 
 .active-hint-badge {
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-sans);
   font-size: 10px;
   font-weight: 700;
   background: var(--text-primary);
   color: var(--bg-canvas);
-  padding: 1px 6px;
+  padding: 2px 7px;
   border-radius: 999px;
   letter-spacing: 0.3px;
   margin-left: auto;
@@ -1096,11 +1111,12 @@ body {
 }
 
 .quota-label {
-  font-family: 'Fira Code', monospace;
-  font-size: 10px;
+  font-family: var(--font-sans);
+  font-size: 10.5px;
   font-weight: 700;
   color: var(--text-muted);
-  letter-spacing: 0.8px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
 }
 
 .quota-meter {
@@ -1130,7 +1146,7 @@ body {
   display: flex;
   align-items: baseline;
   gap: 3px;
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-mono);
   font-size: 14px;
   font-weight: 800;
   background: var(--bg-card);
@@ -1169,10 +1185,11 @@ body {
 }
 
 .guidance-prefix {
-  font-family: 'Fira Code', monospace;
-  font-size: 10px;
+  font-family: var(--font-sans);
+  font-size: 10.5px;
   font-weight: 700;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
 }
 
 .socratic-guidance-note p {
@@ -1259,17 +1276,17 @@ body {
 }
 
 .card-tag-mono {
-  font-family: 'Fira Code', monospace;
-  font-size: 10.5px;
+  font-family: var(--font-sans);
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.4px;
   color: var(--text-secondary);
 }
 
 .card-line-badge {
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 700;
   background: var(--bg-card);
   padding: 2px 7px;
   border-radius: 4px;
@@ -1314,11 +1331,12 @@ body {
 }
 
 .prompt-label {
-  font-family: 'Fira Code', monospace;
-  font-size: 9.5px;
-  font-weight: 800;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 700;
   color: var(--text-dim);
-  letter-spacing: 0.8px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
   display: block;
   margin-bottom: 6px;
 }
@@ -1376,10 +1394,12 @@ body {
 }
 
 .drawer-mono-prefix {
-  font-family: 'Fira Code', monospace;
-  font-size: 9.5px;
+  font-family: var(--font-sans);
+  font-size: 10px;
   font-weight: 700;
   color: var(--text-dim);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
   display: block;
   margin-bottom: 4px;
 }
@@ -1556,15 +1576,15 @@ body {
 }
 
 .submission-mono-badge {
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-sans);
   font-size: 11px;
   font-weight: 700;
   color: var(--text-secondary);
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
 }
 
 .submission-room-stamp {
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 600;
   padding: 2px 7px;
@@ -1624,10 +1644,11 @@ body {
 }
 
 .stat-label {
-  font-family: 'Fira Code', monospace;
-  font-size: 9.5px;
+  font-family: var(--font-sans);
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.6px;
+  text-transform: uppercase;
   color: var(--text-dim);
   margin-bottom: 4px;
 }
@@ -1636,7 +1657,7 @@ body {
   font-size: 14px;
   font-weight: 700;
   color: var(--text-primary);
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font-sans);
 }
 
 .stat-sub {
@@ -1739,7 +1760,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
   color: var(--text-muted);
@@ -1784,18 +1805,20 @@ body {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-family: 'Fira Code', monospace;
-  font-size: 10px;
+  font-family: var(--font-sans);
+  font-size: 10.5px;
   font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
   color: var(--text-muted);
   margin-bottom: 4px;
 }
 
 .hero-stats-panel .stat-value {
   font-size: 18px;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--text-primary);
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-mono);
 }
 
 .hero-stats-panel .stat-max {
@@ -1839,10 +1862,10 @@ body {
 .progress-info {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 600;
   color: var(--text-muted);
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-sans);
 }
 
 .progress-percent {
@@ -1885,9 +1908,9 @@ body {
 }
 
 .challenges-count-badge {
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-sans);
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-muted);
   background: var(--bg-surface-elevated);
   padding: 4px 10px;
@@ -1996,7 +2019,7 @@ body {
 }
 
 .challenge-index {
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 700;
   color: var(--text-muted);
@@ -2016,8 +2039,8 @@ body {
   background: var(--bg-surface-elevated);
   color: var(--text-primary);
   border-radius: 4px;
-  font-family: 'Fira Code', monospace;
-  font-size: 9.5px;
+  font-family: var(--font-sans);
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.5px;
   box-shadow: var(--highlight-top);
@@ -2039,8 +2062,8 @@ body {
 }
 
 .tag-chip {
-  font-family: 'Fira Code', monospace;
-  font-size: 11px;
+  font-family: var(--font-sans);
+  font-size: 11.5px;
   font-weight: 600;
   padding: 4px 10px;
   border-radius: 4px;
@@ -2113,8 +2136,8 @@ body {
 }
 
 .meta-pill {
-  font-family: 'Fira Code', monospace;
-  font-size: 11px;
+  font-family: var(--font-sans);
+  font-size: 11.5px;
   font-weight: 600;
   padding: 4px 10px;
   border-radius: 4px;
