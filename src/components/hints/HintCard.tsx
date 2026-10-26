@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { SocraticHint } from '../../types/hint';
-import { ChevronDown, ChevronUp, Check, AlertCircle, HelpCircle, Lightbulb, Crosshair } from 'lucide-react';
+import { Check, AlertCircle, HelpCircle, Crosshair } from 'lucide-react';
 
 interface HintCardProps {
   hint: SocraticHint;
@@ -9,7 +9,6 @@ interface HintCardProps {
 }
 
 export const HintCard: React.FC<HintCardProps> = ({ hint, index, onFocusLine }) => {
-  const [isRevealed, setIsRevealed] = useState(false);
   const [isUnderstood, setIsUnderstood] = useState(false);
 
   const isSyntax = hint.type === 'syntax';
@@ -48,30 +47,6 @@ export const HintCard: React.FC<HintCardProps> = ({ hint, index, onFocusLine }) 
           <span className="prompt-label">SOCRATIC INQUIRY</span>
           <p className="hint-card-question">{hint.question}</p>
         </div>
-
-        {/* Progressive Disclosure for Deep Concept Hint */}
-        {hint.conceptHint && (
-          <div className="concept-disclosure-section">
-            <button
-              onClick={() => setIsRevealed(!isRevealed)}
-              className="reveal-concept-toggle"
-              aria-expanded={isRevealed}
-            >
-              <div className="toggle-left">
-                <Lightbulb size={13} />
-                <span>{isRevealed ? 'Hide Conceptual Clue' : 'Reveal Conceptual Clue'}</span>
-              </div>
-              {isRevealed ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
-            </button>
-
-            {isRevealed && (
-              <div className="hint-reflection-drawer">
-                <span className="drawer-mono-prefix">&gt;&gt; PRINCIPLE</span>
-                <p className="reflection-text">{hint.conceptHint}</p>
-              </div>
-            )}
-          </div>
-        )}
 
         {/* Card Footer: Mark as Understood Action */}
         <div className="card-footer-actions">
