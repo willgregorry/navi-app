@@ -6,12 +6,14 @@ import { HintPanel } from './components/hints/HintPanel';
 import { ViolationBanner } from './components/alarm/ViolationBanner';
 import { JoinRoomView } from './components/modals/JoinRoomView';
 import { useFocusGuard } from './hooks/useFocusGuard';
+import { useTheme } from './hooks/useTheme';
 import { SAMPLE_PROBLEM, analyzeCodeLocally } from './services/mockExam';
 import type { ExecutionResult } from './types/exam';
 import type { SocraticHint } from './types/hint';
 import './index.css';
 
 export const App: React.FC = () => {
+  const { theme, toggleTheme } = useTheme();
   const [isJoined, setIsJoined] = useState(false);
   const [studentName, setStudentName] = useState('');
   const [studentId, setStudentId] = useState('');
@@ -77,7 +79,13 @@ export const App: React.FC = () => {
   };
 
   if (!isJoined) {
-    return <JoinRoomView onJoin={handleJoin} />;
+    return (
+      <JoinRoomView
+        onJoin={handleJoin}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+      />
+    );
   }
 
   return (
@@ -89,6 +97,8 @@ export const App: React.FC = () => {
         violationCount={violationCount}
         isKioskActive={isKioskActive}
         onToggleKiosk={handleToggleKiosk}
+        theme={theme}
+        onToggleTheme={toggleTheme}
       />
 
       <div className="three-panel-grid">
@@ -100,6 +110,7 @@ export const App: React.FC = () => {
           onSubmit={handleSubmit}
           isRunning={isRunning}
           executionResult={executionResult}
+          theme={theme}
         />
         <HintPanel
           hints={hints}

@@ -1,4 +1,6 @@
-import { Shield, AlertTriangle, Clock } from 'lucide-react';
+import React from 'react';
+import { Shield, AlertTriangle, Clock, Sun, Moon } from 'lucide-react';
+import type { Theme } from '../../hooks/useTheme';
 
 interface ExamHeaderProps {
   roomCode: string;
@@ -8,6 +10,8 @@ interface ExamHeaderProps {
   timeRemaining?: string;
   isKioskActive: boolean;
   onToggleKiosk?: () => void;
+  theme: Theme;
+  onToggleTheme: () => void;
 }
 
 export const ExamHeader: React.FC<ExamHeaderProps> = ({
@@ -18,6 +22,8 @@ export const ExamHeader: React.FC<ExamHeaderProps> = ({
   timeRemaining = '58:40',
   isKioskActive,
   onToggleKiosk,
+  theme,
+  onToggleTheme,
 }) => {
   return (
     <header className="exam-header">
@@ -33,19 +39,28 @@ export const ExamHeader: React.FC<ExamHeaderProps> = ({
 
       <div className="header-student-info">
         <span className="student-name">{studentName}</span>
-        <span className="student-nim">({studentId})</span>
+        <span className="student-nim">[{studentId}]</span>
       </div>
 
       <div className="header-status-group">
         <div className="timer-badge">
-          <Clock size={15} />
+          <Clock size={14} />
           <span>{timeRemaining}</span>
         </div>
 
         <div className={`violation-badge ${violationCount > 0 ? 'has-violations' : ''}`}>
-          <AlertTriangle size={15} />
+          <AlertTriangle size={14} />
           <span>{violationCount} {violationCount === 1 ? 'Violation' : 'Violations'}</span>
         </div>
+
+        <button
+          onClick={onToggleTheme}
+          className="theme-toggle-btn"
+          title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+          aria-label="Toggle Theme"
+        >
+          {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
+        </button>
 
         {onToggleKiosk && (
           <button
@@ -53,8 +68,8 @@ export const ExamHeader: React.FC<ExamHeaderProps> = ({
             className={`kiosk-toggle-btn ${isKioskActive ? 'active' : ''}`}
             title="Toggle Fullscreen Kiosk Mode"
           >
-            <Shield size={14} />
-            <span>{isKioskActive ? 'Kiosk ON' : 'Kiosk OFF'}</span>
+            <Shield size={13} />
+            <span>{isKioskActive ? 'Kiosk Active' : 'Kiosk Inactive'}</span>
           </button>
         )}
       </div>

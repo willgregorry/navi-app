@@ -1,6 +1,5 @@
 import React from 'react';
 import type { SocraticHint } from '../../types/hint';
-import { HelpCircle, AlertCircle, Sparkles } from 'lucide-react';
 
 interface HintCardProps {
   hint: SocraticHint;
@@ -11,29 +10,27 @@ export const HintCard: React.FC<HintCardProps> = ({ hint, index }) => {
   const isSyntax = hint.type === 'syntax';
 
   return (
-    <div className={`hint-card ${isSyntax ? 'syntax-hint' : 'logic-hint'}`}>
-      <div className="hint-card-header">
-        <div className="hint-badge-group">
-          <span className={`hint-type-tag ${hint.type}`}>
-            {isSyntax ? <AlertCircle size={12} /> : <HelpCircle size={12} />}
-            {isSyntax ? 'Syntax Error' : 'Logic Error'}
-          </span>
-          {hint.line !== undefined && (
-            <span className="hint-line-tag">Line {hint.line}</span>
-          )}
-        </div>
-        <span className="hint-number">#{index + 1}</span>
+    <div className={`hint-card-unique ${isSyntax ? 'syntax-card' : 'logic-card'}`}>
+      <div className="card-top-tag">
+        <span className="card-tag-mono">
+          [{String(index + 1).padStart(2, '0')} // {isSyntax ? 'SYNTAX' : 'LOGIC'}]
+        </span>
+        {hint.line !== undefined && (
+          <span className="card-line-pill">L{hint.line}</span>
+        )}
       </div>
 
-      <h4 className="hint-title">{hint.title}</h4>
-      <p className="hint-question">{hint.question}</p>
+      <div className="card-body-content">
+        <h4 className="hint-card-title">{hint.title}</h4>
+        <p className="hint-card-question">{hint.question}</p>
 
-      {hint.conceptHint && (
-        <div className="concept-tip">
-          <Sparkles size={12} />
-          <span>{hint.conceptHint}</span>
-        </div>
-      )}
+        {hint.conceptHint && (
+          <div className="hint-reflection-box">
+            <span className="reflection-bullet">■</span>
+            <p className="reflection-text">{hint.conceptHint}</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

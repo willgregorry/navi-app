@@ -1,7 +1,7 @@
 import React from 'react';
 import type { SocraticHint } from '../../types/hint';
 import { HintCard } from './HintCard';
-import { Lightbulb, Info } from 'lucide-react';
+import { HelpCircle } from 'lucide-react';
 
 interface HintPanelProps {
   hints: SocraticHint[];
@@ -17,20 +17,22 @@ export const HintPanel: React.FC<HintPanelProps> = ({
   return (
     <aside className="panel hint-panel">
       <div className="panel-header">
-        <Lightbulb size={16} />
-        <h2>Socratic Hint Center</h2>
+        <HelpCircle size={14} />
+        <h2>Socratic Diagnostics</h2>
       </div>
 
       <div className="hint-quota-bar">
-        <span className="quota-label">Remaining Hints:</span>
-        <div className="quota-pill">
-          <strong>{availableHints}</strong> / {maxHints}
+        <span className="quota-label">HINTS REMAINING</span>
+        <div className="quota-pill-mono">
+          <span className="quota-active">{availableHints}</span>
+          <span className="quota-divider">/</span>
+          <span className="quota-max">{maxHints}</span>
         </div>
       </div>
 
       <div className="panel-content scrollable">
         <div className="socratic-guidance-note">
-          <Info size={14} />
+          <span className="guidance-prefix">NOTE //</span>
           <p>
             Socratic hints guide your conceptual reasoning without ever giving away direct code solutions.
           </p>
@@ -38,8 +40,9 @@ export const HintPanel: React.FC<HintPanelProps> = ({
 
         {hints.length === 0 ? (
           <div className="empty-hints-state">
-            <p>No errors detected.</p>
-            <span>Click <strong>Run Code</strong> to validate your syntax and verify test cases.</span>
+            <div className="empty-dot" />
+            <p>No active diagnostic issues.</p>
+            <span>Run your code to evaluate syntax and logic against test cases.</span>
           </div>
         ) : (
           <div className="hints-list">

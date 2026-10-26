@@ -2,6 +2,7 @@ import React from 'react';
 import Editor from '@monaco-editor/react';
 import { Play, CheckCircle, Terminal as TerminalIcon } from 'lucide-react';
 import type { ExecutionResult } from '../../types/exam';
+import type { Theme } from '../../hooks/useTheme';
 
 interface EditorPanelProps {
   code: string;
@@ -10,6 +11,7 @@ interface EditorPanelProps {
   onSubmit: () => void;
   isRunning: boolean;
   executionResult: ExecutionResult | null;
+  theme: Theme;
 }
 
 export const EditorPanel: React.FC<EditorPanelProps> = ({
@@ -19,12 +21,13 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
   onSubmit,
   isRunning,
   executionResult,
+  theme,
 }) => {
   return (
     <main className="panel editor-panel">
       <div className="editor-top-bar">
         <div className="file-tab active">
-          <span>solution.py</span>
+          <span className="file-name">solution.py</span>
           <span className="lang-tag">Python 3</span>
         </div>
 
@@ -34,7 +37,7 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
             disabled={isRunning}
             className="action-btn run-btn"
           >
-            <Play size={14} />
+            <Play size={13} />
             <span>{isRunning ? 'Running...' : 'Run Code'}</span>
           </button>
 
@@ -43,8 +46,8 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
             disabled={isRunning}
             className="action-btn submit-btn"
           >
-            <CheckCircle size={14} />
-            <span>Submit Solution</span>
+            <CheckCircle size={13} />
+            <span>Submit</span>
           </button>
         </div>
       </div>
@@ -53,11 +56,11 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
         <Editor
           height="100%"
           language="python"
-          theme="vs-dark"
+          theme={theme === 'dark' ? 'vs-dark' : 'light'}
           value={code}
           onChange={onChange}
           options={{
-            fontSize: 14,
+            fontSize: 13.5,
             fontFamily: "'Fira Code', 'JetBrains Mono', Consolas, monospace",
             minimap: { enabled: false },
             lineNumbers: 'on',
@@ -65,25 +68,26 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
             automaticLayout: true,
             tabSize: 4,
             insertSpaces: true,
+            padding: { top: 12 },
           }}
         />
       </div>
 
       <div className="terminal-drawer">
         <div className="terminal-header">
-          <TerminalIcon size={14} />
-          <span>Terminal Output (Stdout / Stderr)</span>
+          <TerminalIcon size={13} />
+          <span>Output & Diagnostics</span>
         </div>
         <div className="terminal-body">
           {isRunning ? (
-            <div className="terminal-running">Executing code in secure sandbox...</div>
+            <div className="terminal-running">Executing code in sandbox...</div>
           ) : executionResult ? (
             <pre className={executionResult.isSuccess ? 'output-success' : 'output-error'}>
               {executionResult.stderr || executionResult.stdout || 'Program completed with no output.'}
             </pre>
           ) : (
             <div className="terminal-placeholder">
-              Program output and error diagnostics will appear here once you run your code.
+              Click &quot;Run Code&quot; to execute and see stdout/stderr diagnostics.
             </div>
           )}
         </div>

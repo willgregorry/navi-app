@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Problem } from '../../types/exam';
-import { FileCode, CheckCircle2 } from 'lucide-react';
+import { Terminal } from 'lucide-react';
 
 interface ProblemPanelProps {
   problem: Problem;
@@ -10,47 +10,51 @@ export const ProblemPanel: React.FC<ProblemPanelProps> = ({ problem }) => {
   return (
     <aside className="panel problem-panel">
       <div className="panel-header">
-        <FileCode size={16} />
+        <Terminal size={14} />
         <h2>{problem.title}</h2>
       </div>
 
       <div className="panel-content scrollable">
         <section className="problem-section">
-          <h3>Problem Description</h3>
+          <div className="section-title-label">01 // SPECIFICATION</div>
           <p className="problem-text">{problem.description}</p>
         </section>
 
         {problem.constraints.length > 0 && (
           <section className="problem-section">
-            <h3>Constraints</h3>
-            <ul className="constraints-list">
+            <div className="section-title-label">02 // CONSTRAINTS</div>
+            <div className="constraints-card">
               {problem.constraints.map((c, idx) => (
-                <li key={idx}><code>{c}</code></li>
+                <div key={idx} className="constraint-item">
+                  <span className="mono-dot">&gt;</span>
+                  <code>{c}</code>
+                </div>
               ))}
-            </ul>
+            </div>
           </section>
         )}
 
         <section className="problem-section">
-          <h3>Sample Test Cases</h3>
-          {problem.sampleTestCases.map((tc, idx) => (
-            <div key={tc.id || idx} className="sample-card">
-              <div className="sample-title">
-                <CheckCircle2 size={13} />
-                <span>Test Case #{idx + 1}</span>
-              </div>
-              <div className="sample-io">
-                <div className="io-block">
-                  <span className="io-label">Input:</span>
-                  <pre><code>{tc.input}</code></pre>
+          <div className="section-title-label">03 // TEST CASES</div>
+          <div className="test-cases-stack">
+            {problem.sampleTestCases.map((tc, idx) => (
+              <div key={tc.id || idx} className="sample-card-unique">
+                <div className="sample-tab-header">
+                  <span className="sample-index-badge">CASE {String(idx + 1).padStart(2, '0')}</span>
                 </div>
-                <div className="io-block">
-                  <span className="io-label">Expected Output:</span>
-                  <pre><code>{tc.expectedOutput}</code></pre>
+                <div className="sample-io-split">
+                  <div className="io-col">
+                    <span className="io-heading">INPUT</span>
+                    <pre><code>{tc.input}</code></pre>
+                  </div>
+                  <div className="io-col">
+                    <span className="io-heading">EXPECTED</span>
+                    <pre><code>{tc.expectedOutput}</code></pre>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </section>
       </div>
     </aside>
