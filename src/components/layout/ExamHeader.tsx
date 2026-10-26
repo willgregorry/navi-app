@@ -31,10 +31,8 @@ export const ExamHeader: React.FC<ExamHeaderProps> = ({
         <div className="brand-logo">
           <img src="/navi-favicon.png" alt="Navi" className="header-logo-img" />
         </div>
-        <div className="brand-meta">
-          <span className="brand-title">Navi Kiosk</span>
-          <span className="room-badge">{roomCode}</span>
-        </div>
+        <span className="brand-title">Navi Kiosk</span>
+        <span className="room-badge">{roomCode}</span>
       </div>
 
       <div className="header-student-info">
