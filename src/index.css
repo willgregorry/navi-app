@@ -66,12 +66,53 @@
   --alarm-red: #dc2626;
   --alarm-red-subtle: rgba(220, 38, 38, 0.1);
   --success-green: #16a34a;
+
+  --scrollbar-thumb: rgba(0, 0, 0, 0.15);
+  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.32);
+}
+
+:root,
+[data-theme="dark"] {
+  --scrollbar-thumb: rgba(255, 255, 255, 0.16);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.35);
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+
+/* Global Minimalist Scrollbar (No ugly arrows, thin sleek thumb) */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 999px;
+  transition: background 0.15s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 body {
@@ -393,15 +434,91 @@ body {
 }
 
 /* ==========================================================================
-   THREE-PANEL GRID LAYOUT
+   THREE-PANEL RESIZABLE LAYOUT
    ========================================================================== */
 
-.three-panel-grid {
-  display: grid;
-  grid-template-columns: 330px 1fr 340px;
+.three-panel-resizable-container {
+  display: flex;
   height: calc(100vh - 50px);
+  width: 100vw;
   overflow: hidden;
   background: var(--bg-canvas);
+  position: relative;
+}
+
+.three-panel-resizable-container.is-resizing {
+  cursor: col-resize;
+  user-select: none;
+}
+
+/* Invisible shield over iframe / Monaco while resizing */
+.resize-drag-shield {
+  position: fixed;
+  inset: 0;
+  z-index: 9990;
+  cursor: col-resize;
+  background: transparent;
+}
+
+.resizable-panel-wrapper {
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.resizable-center-wrapper {
+  flex: 1;
+  min-width: 320px;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Slick Draggable Divider Bar */
+.panel-resize-handle {
+  width: 7px;
+  background: transparent;
+  cursor: col-resize;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 5;
+  transition: background 0.15s ease;
+}
+
+.panel-resize-handle::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--divider-line);
+  transition: background 0.15s ease, width 0.15s ease;
+}
+
+.handle-grip-line {
+  width: 3px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--text-dim);
+  opacity: 0;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.panel-resize-handle:hover::before,
+.panel-resize-handle.dragging::before {
+  width: 2px;
+  background: var(--text-primary);
+}
+
+.panel-resize-handle:hover .handle-grip-line,
+.panel-resize-handle.dragging .handle-grip-line {
+  opacity: 1;
 }
 
 .panel {
@@ -409,12 +526,9 @@ body {
   flex-direction: column;
   background: var(--bg-surface);
   height: 100%;
+  width: 100%;
   overflow: hidden;
   position: relative;
-}
-
-.panel:not(:last-child) {
-  border-right: 1px solid var(--divider-line);
 }
 
 .panel-header {

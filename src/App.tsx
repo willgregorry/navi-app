@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ExamHeader } from './components/layout/ExamHeader';
+import { ResizablePanels } from './components/layout/ResizablePanels';
 import { ProblemPanel } from './components/problem/ProblemPanel';
 import { EditorPanel } from './components/editor/EditorPanel';
 import { HintPanel } from './components/hints/HintPanel';
@@ -112,23 +113,33 @@ export const App: React.FC = () => {
         onToggleTheme={toggleTheme}
       />
 
-      <div className="three-panel-grid">
-        <ProblemPanel problem={SAMPLE_PROBLEM} />
-        <EditorPanel
-          code={code}
-          onChange={(val) => setCode(val || '')}
-          onRunCode={handleRunCode}
-          onSubmit={handleSubmit}
-          isRunning={isRunning}
-          executionResult={executionResult}
-          theme={theme}
-        />
-        <HintPanel
-          hints={hints}
-          availableHints={availableHints}
-          maxHints={5}
-        />
-      </div>
+      <ResizablePanels
+        leftPanel={<ProblemPanel problem={SAMPLE_PROBLEM} />}
+        centerPanel={
+          <EditorPanel
+            code={code}
+            onChange={(val) => setCode(val || '')}
+            onRunCode={handleRunCode}
+            onSubmit={handleSubmit}
+            isRunning={isRunning}
+            executionResult={executionResult}
+            theme={theme}
+          />
+        }
+        rightPanel={
+          <HintPanel
+            hints={hints}
+            availableHints={availableHints}
+            maxHints={5}
+          />
+        }
+        initialLeftWidth={340}
+        initialRightWidth={340}
+        minLeftWidth={260}
+        maxLeftWidth={540}
+        minRightWidth={280}
+        maxRightWidth={540}
+      />
 
       <ViolationBanner
         isOpen={isDistracted}
