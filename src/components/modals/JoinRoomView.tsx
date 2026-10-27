@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { ShieldCheck, ArrowRight, Sun, Moon, AlertCircle } from 'lucide-react';
 import type { Theme } from '../../hooks/useTheme';
+import naviLogo from '../../assets/navi-logo.png';
 
 interface JoinRoomViewProps {
   onJoin: (studentName: string, studentId: string, roomCode: string) => void;
@@ -91,7 +92,7 @@ export const JoinRoomView: React.FC<JoinRoomViewProps> = ({
       <div className="join-card-unique">
         <div className="join-card-header">
           <div className="join-logo-box">
-            <img src="/navi-favicon.png" alt="Navi" className="join-logo-img" />
+            <img src={naviLogo} alt="Navi" className="join-logo-img" />
           </div>
           <h1>Navi Kiosk</h1>
           <p className="subtitle">Secure Python Assessment Platform with Socratic Guidance</p>

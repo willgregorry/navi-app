@@ -1,4 +1,4 @@
-const { BrowserWindow, app } = require('electron');
+const { BrowserWindow, Menu, app } = require('electron');
 const path = require('path');
 const { IPC_CHANNELS, WINDOW_DEFAULTS } = require('./constants.cjs');
 const { setupKeyboardSecurity } = require('./shortcuts.cjs');
@@ -6,6 +6,8 @@ const { setupKeyboardSecurity } = require('./shortcuts.cjs');
 let mainWindow = null;
 
 function createMainWindow() {
+  Menu.setApplicationMenu(null);
+
   mainWindow = new BrowserWindow({
     width: WINDOW_DEFAULTS.WIDTH,
     height: WINDOW_DEFAULTS.HEIGHT,
@@ -14,13 +16,28 @@ function createMainWindow() {
     backgroundColor: WINDOW_DEFAULTS.BG_COLOR,
     frame: true,
     show: false,
+    autoHideMenuBar: true,
     icon: path.join(__dirname, '../public/navi-favicon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
       nodeIntegration: false,
       contextIsolation: true,
       sandbox: false,
+      devTools: false,
     },
+  });
+
+  mainWindow.removeMenu();
+  mainWindow.setMenuBarVisibility(false);
+
+  // Prevent right-click context menu (Inspect Element)
+  mainWindow.webContents.on('context-menu', (e) => {
+    e.preventDefault();
+  });
+
+  // Automatically close DevTools if triggered by any mechanism
+  mainWindow.webContents.on('devtools-opened', () => {
+    mainWindow.webContents.closeDevTools();
   });
 
   setupKeyboardSecurity(mainWindow);

@@ -4,20 +4,32 @@
  */
 function setupKeyboardSecurity(win) {
   win.webContents.on('before-input-event', (event, input) => {
-    // Only enforce restrictions when kiosk / exam mode is active
-    if (!win.isKiosk()) return;
+    const key = (input.key || '').toLowerCase();
 
-    const blockedCombos = [
-      input.key === 'F11',
-      input.key === 'F5',
-      input.control && input.key.toLowerCase() === 'r',
-      input.control && input.key.toLowerCase() === 'w',
-      input.alt && input.key === 'F4',
-      input.control && input.shift && input.key.toLowerCase() === 'i', // DevTools block
-    ];
+    // 1. Always prevent DevTools & Inspect shortcuts anywhere in the application
+    const isDevToolsShortcut =
+      key === 'f12' ||
+      (input.control && input.shift && (key === 'i' || key === 'j' || key === 'c')) ||
+      (input.control && key === 'u'); // View Source block
 
-    if (blockedCombos.some(Boolean)) {
+    if (isDevToolsShortcut) {
       event.preventDefault();
+      return;
+    }
+
+    // 2. Kiosk-specific restrictions (only when exam kiosk mode is active)
+    if (win.isKiosk()) {
+      const blockedCombos = [
+        key === 'f11',
+        key === 'f5',
+        input.control && key === 'r',
+        input.control && key === 'w',
+        input.alt && key === 'f4',
+      ];
+
+      if (blockedCombos.some(Boolean)) {
+        event.preventDefault();
+      }
     }
   });
 }

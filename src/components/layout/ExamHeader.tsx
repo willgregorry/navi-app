@@ -1,6 +1,7 @@
 import React from 'react';
 import { Shield, AlertTriangle, Clock, Sun, Moon, ArrowLeft } from 'lucide-react';
 import type { Theme } from '../../hooks/useTheme';
+import naviLogo from '../../assets/navi-logo.png';
 
 interface ExamHeaderProps {
   roomCode: string;
@@ -33,7 +34,7 @@ export const ExamHeader: React.FC<ExamHeaderProps> = ({
     <header className="exam-header">
       <div className="header-brand">
         <div className="brand-logo">
-          <img src="/navi-favicon.png" alt="Navi" className="header-logo-img" />
+          <img src={naviLogo} alt="Navi" className="header-logo-img" />
         </div>
         <span className="brand-title">Navi Kiosk</span>
         <span className="room-badge">{roomCode}</span>
