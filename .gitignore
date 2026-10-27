@@ -27,3 +27,4 @@ dist-ssr
 *.sw?
 openapi.json
 PROMPT-BE.md
+release/

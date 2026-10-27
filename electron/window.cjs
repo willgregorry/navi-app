@@ -1,4 +1,4 @@
-const { BrowserWindow } = require('electron');
+const { BrowserWindow, app } = require('electron');
 const path = require('path');
 const { IPC_CHANNELS, WINDOW_DEFAULTS } = require('./constants.cjs');
 const { setupKeyboardSecurity } = require('./shortcuts.cjs');
@@ -49,7 +49,7 @@ function bindWindowEvents(win) {
 }
 
 function loadWindowContent(win) {
-  const isDev = process.env.NODE_ENV === 'development' || !process.env.APP_IS_PACKAGED;
+  const isDev = !app.isPackaged && (process.env.NODE_ENV === 'development' || !process.env.APP_IS_PACKAGED);
 
   if (isDev) {
     const devUrl = process.env.ELECTRON_DEV_URL || 'http://localhost:5173';
